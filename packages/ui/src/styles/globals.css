@@ -1,0 +1,225 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+@source "../../../apps/**/*.{ts,tsx}";
+@source "../../../components/**/*.{ts,tsx}";
+@source "../**/*.{ts,tsx}";
+
+@theme inline {
+    --font-heading: var(--font-sans);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+    --radius-xl: 1rem;
+    --font-sans: var(--font-brand);
+
+    /* Brand palette, for decoration (pastilles, triangle, pictogram discs). */
+    --color-aura-blue: var(--aura-blue);
+    --color-aura-slate: var(--aura-slate);
+    --color-aura-yellow: var(--aura-yellow);
+    --color-aura-green: var(--aura-green);
+    --color-aura-magenta: var(--aura-magenta);
+    --color-aura-orange: var(--aura-orange);
+    --color-aura-grey-bg: var(--aura-grey-bg);
+    --color-link: var(--link);
+}
+
+:root {
+    /* AURA Orientation charter (see aura-design.md). */
+    --aura-blue: #0096de;
+    --aura-slate: #353d4d;
+    --aura-yellow: #efdf00;
+    --aura-green: #00c389;
+    --aura-magenta: #da1884;
+    --aura-orange: #fc4c02;
+    --aura-white: #ffffff;
+    --aura-blue-text: #0077b3;
+    --aura-grey-bg: #d8dadf;
+    /* Graphik is not bundled (licence pending): add its @font-face here once
+       the WOFF2 files are available. Arial is the charter's fallback. */
+    --font-brand: "Graphik", Arial, "Helvetica Neue", Helvetica, sans-serif;
+
+    --background: var(--aura-white);
+    --foreground: var(--aura-slate);
+    --card: var(--aura-white);
+    --card-foreground: var(--aura-slate);
+    --popover: var(--aura-white);
+    --popover-foreground: var(--aura-slate);
+    --primary: var(--aura-slate);
+    --primary-foreground: var(--aura-white);
+    --secondary: #eef0f3;
+    --secondary-foreground: var(--aura-slate);
+    --muted: #eef0f3;
+    --muted-foreground: #5e6677;
+    --accent: #e0f2fb;
+    --accent-foreground: var(--aura-slate);
+    /* The charter has no error colour: orange darkened to pass AA on white. */
+    --destructive: #c73a00;
+    --border: var(--aura-grey-bg);
+    --input: #8a91a0;
+    --ring: var(--aura-slate);
+    --link: var(--aura-blue-text);
+    --chart-1: var(--aura-blue);
+    --chart-2: var(--aura-green);
+    --chart-3: var(--aura-magenta);
+    --chart-4: var(--aura-orange);
+    --chart-5: var(--aura-yellow);
+    --radius: 0.75rem;
+    --sidebar: #f6f7f9;
+    --sidebar-foreground: var(--aura-slate);
+    --sidebar-primary: var(--aura-slate);
+    --sidebar-primary-foreground: var(--aura-white);
+    --sidebar-accent: #e0f2fb;
+    --sidebar-accent-foreground: var(--aura-slate);
+    --sidebar-border: var(--aura-grey-bg);
+    --sidebar-ring: var(--aura-slate);
+}
+
+.dark {
+    --background: #262c38;
+    --foreground: var(--aura-white);
+    --card: var(--aura-slate);
+    --card-foreground: var(--aura-white);
+    --popover: var(--aura-slate);
+    --popover-foreground: var(--aura-white);
+    --primary: var(--aura-white);
+    --primary-foreground: var(--aura-slate);
+    --secondary: #414a5c;
+    --secondary-foreground: var(--aura-white);
+    --muted: var(--aura-slate);
+    --muted-foreground: #b9bec8;
+    --accent: #414a5c;
+    --accent-foreground: var(--aura-white);
+    --destructive: #ff7a45;
+    --border: oklch(1 0 0 / 15%);
+    --input: oklch(1 0 0 / 45%);
+    --ring: var(--aura-white);
+    --link: var(--aura-white);
+    --sidebar: #1f242e;
+    --sidebar-foreground: var(--aura-white);
+    --sidebar-primary: var(--aura-blue);
+    --sidebar-primary-foreground: var(--aura-white);
+    --sidebar-accent: var(--aura-slate);
+    --sidebar-accent-foreground: var(--aura-white);
+    --sidebar-border: oklch(1 0 0 / 15%);
+    --sidebar-ring: var(--aura-white);
+}
+
+/* Brand bands (poster layout: blue hero, slate info band). They remap the
+   tokens so components placed inside pick the reversed styles on their own:
+   white primary button, white borders, links and focus ring. */
+@utility surface-blue {
+    --background: var(--aura-blue);
+    --foreground: var(--aura-white);
+    --primary: var(--aura-white);
+    --primary-foreground: var(--aura-slate);
+    --muted: oklch(1 0 0 / 15%);
+    --muted-foreground: var(--aura-white);
+    --accent: oklch(1 0 0 / 15%);
+    --accent-foreground: var(--aura-white);
+    --border: oklch(1 0 0 / 40%);
+    --input: var(--aura-white);
+    --ring: var(--aura-white);
+    --link: var(--aura-white);
+    background-color: var(--background);
+    color: var(--foreground);
+}
+
+@utility surface-slate {
+    --background: var(--aura-slate);
+    --foreground: var(--aura-white);
+    --primary: var(--aura-white);
+    --primary-foreground: var(--aura-slate);
+    --muted: oklch(1 0 0 / 12%);
+    --muted-foreground: #d8dadf;
+    --accent: oklch(1 0 0 / 12%);
+    --accent-foreground: var(--aura-white);
+    --border: oklch(1 0 0 / 25%);
+    --input: oklch(1 0 0 / 60%);
+    --ring: var(--aura-white);
+    --link: var(--aura-white);
+    background-color: var(--background);
+    color: var(--foreground);
+}
+
+/* Type scale, 375px -> 1024px viewport. Named type-* rather than text-* so
+   class merging never mistakes them for text colours. */
+@utility type-display {
+    font-size: clamp(2.25rem, 1.239rem + 4.314vw, 4rem);
+    line-height: 1.05;
+}
+
+@utility type-h1 {
+    font-size: clamp(1.75rem, 1.172rem + 2.465vw, 2.75rem);
+    line-height: 1.1;
+}
+
+@utility type-h2 {
+    font-size: clamp(1.375rem, 1.014rem + 1.541vw, 2rem);
+    line-height: 1.2;
+}
+
+@utility type-h3 {
+    font-size: clamp(1.125rem, 0.981rem + 0.616vw, 1.375rem);
+    line-height: 1.3;
+}
+
+@utility type-body {
+    font-size: clamp(1rem, 0.928rem + 0.308vw, 1.125rem);
+    line-height: 1.5;
+}
+
+@utility type-caption {
+    font-size: clamp(0.8125rem, 0.776rem + 0.154vw, 0.875rem);
+    line-height: 1.4;
+}
+
+@utility type-overline {
+    font-size: clamp(0.75rem, 0.714rem + 0.154vw, 0.8125rem);
+    line-height: 1.3;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background type-body text-foreground;
+    }
+}

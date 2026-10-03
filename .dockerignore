@@ -1,0 +1,12 @@
+.git
+.github
+**/node_modules
+**/dist
+**/.turbo
+**/*.tsbuildinfo
+**/.env*
+
+# The mobile app is not built into any image. Its manifest stays: the
+# workspace and the lockfile refer to it, and `turbo prune` reads it.
+apps/mobile/**
+!apps/mobile/package.json

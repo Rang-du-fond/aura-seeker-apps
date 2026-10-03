@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "Aura Seeker",
+    "slug": "aura-seeker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#FFFFFF",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "L'appareil photo sert à photographier les panneaux que vous recensez.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Votre position sert à placer sur la carte les panneaux que vous recensez."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Vos photos servent à choisir l'image d'un panneau que vous recensez.",
+          "microphonePermission": false
+        }
+      ]
+    ],
+    "scheme": "auraseeker",
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

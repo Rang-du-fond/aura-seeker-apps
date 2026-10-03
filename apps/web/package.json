@@ -1,0 +1,41 @@
+{
+  "name": "web",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint",
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview",
+    "build:hero": "bun scripts/build-hero-pattern.ts"
+  },
+  "dependencies": {
+    "@workspace/ui": "workspace:*",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^1.49.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-router": "^8.4.0",
+    "supercluster": "^9.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10",
+    "@tailwindcss/vite": "^4",
+    "@types/leaflet": "^1.9.22",
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/supercluster": "^7.1.3",
+    "@vitejs/plugin-react": "^6",
+    "eslint": "^10",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "globals": "^17",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8",
+    "vite": "^8"
+  }
+}

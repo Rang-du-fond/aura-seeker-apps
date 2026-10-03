@@ -1,0 +1,43 @@
+/* Home hero: the pattern sweeps in column by column, then the content rises. */
+.hero-pattern g {
+  opacity: 0;
+  transform-box: fill-box;
+  animation: hero-sweep 1s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+.hero-content {
+  animation: hero-rise 0.8s 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes hero-sweep {
+  from {
+    opacity: 0;
+    transform: translateX(-28px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-pattern g {
+    animation: none;
+    opacity: 1;
+  }
+
+  .hero-content {
+    animation: none;
+  }
+}

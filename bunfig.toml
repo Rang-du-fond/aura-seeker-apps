@@ -1,0 +1,3 @@
+[install]
+# One copy of each package: Expo's native modules break when duplicated.
+linker = "hoisted"
