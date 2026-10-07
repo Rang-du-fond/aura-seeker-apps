@@ -59,11 +59,21 @@ var positionIcon = L.divIcon({
 })
 
 var map = L.map("map", { zoomControl: false })
-// The map opens on metropolitan France.
-map.fitBounds([
+// The map opens on metropolitan France. The page can be loaded before the
+// web view has a size: fitting bounds in no room gives the whole world, so the
+// fit is done again when the page gets its size, unless something else (a
+// focus, a place, the position picker) has set the view meanwhile.
+var france = [
   [41.3, -5.2],
   [51.1, 9.6],
-])
+]
+var opened = false
+function openOnFrance() {
+  var size = map.getSize()
+  map.fitBounds(france, { animate: false })
+  opened = size.x > 0 && size.y > 0
+}
+openOnFrance()
 map.attributionControl.setPrefix(false)
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
@@ -148,6 +158,7 @@ function draw() {
 function receivePicker(picker) {
   if (!picking) {
     picking = true
+    opened = true
     map.setView([picker.latitude, picker.longitude], 18, { animate: false })
     pickerPin = document.createElement("div")
     pickerPin.className = "picker"
@@ -213,12 +224,14 @@ window.receive = function (next) {
         fillOpacity: 0.08,
         interactive: false,
       }).addTo(map)
+      opened = true
       map.fitBounds(aroundCircle.getBounds(), { padding: [16, 16] })
     }
   }
   // `request` changes each time the app asks to centre, even on the same point.
   if (state.focus && state.focus.request !== lastFocus) {
     lastFocus = state.focus.request
+    opened = true
     map.flyTo(
       [state.focus.latitude, state.focus.longitude],
       Math.max(map.getZoom(), 14)
@@ -249,9 +262,17 @@ function reportView() {
 
 map.on("moveend", draw)
 map.on("moveend", reportView)
-window.addEventListener("resize", function () {
+function resized() {
   map.invalidateSize()
-})
+  if (!opened) {
+    openOnFrance()
+  }
+}
+window.addEventListener("resize", resized)
+// Some web views give the page its size without a resize event.
+if (window.ResizeObserver) {
+  new ResizeObserver(resized).observe(map.getContainer())
+}
 // The web preview talks to this page through postMessage.
 window.addEventListener("message", function (event) {
   if (typeof event.data === "string") {
