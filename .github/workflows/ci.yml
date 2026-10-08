@@ -82,6 +82,7 @@ jobs:
           file: apps/web/Dockerfile
           build-args: |
             VITE_API_URL=${{ env.API_URL }}
+            APK_REFRESH=${{ github.run_id }}
           load: true
           tags: ci-local:test
           cache-from: type=gha,scope=web
@@ -131,6 +132,7 @@ jobs:
           file: apps/web/Dockerfile
           build-args: |
             VITE_API_URL=${{ env.API_URL }}
+            APK_REFRESH=${{ github.run_id }}
           push: true
           platforms: linux/amd64        # add linux/arm64 if needed
           tags: ${{ steps.meta.outputs.tags }}

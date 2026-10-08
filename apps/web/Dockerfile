@@ -34,9 +34,15 @@ RUN bun run build --filter=web
 
 # Unprivileged nginx: runs as user 101 and listens on 8080.
 FROM nginxinc/nginx-unprivileged:${NGINX_VERSION}-alpine AS runtime
-# The base image lags behind Alpine's security fixes: take them now.
+# Remove the optional nginx modules (image filter, XSLT, GeoIP, njs) and the
+# libraries only they need, then take Alpine's security fixes, which the base
+# image lags behind. A new APK_REFRESH value makes Docker run this again
+# instead of reusing a cached layer with yesterday's packages.
+ARG APK_REFRESH
 USER root
-RUN apk upgrade --no-cache
+RUN apk del --no-cache nginx-module-image-filter nginx-module-xslt \
+      nginx-module-geoip nginx-module-njs \
+    && apk upgrade --no-cache
 USER 101
 # Lets the configuration template use the container's DNS servers.
 ENV NGINX_ENTRYPOINT_LOCAL_RESOLVERS=1 \
