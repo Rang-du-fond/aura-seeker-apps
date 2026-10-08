@@ -2,6 +2,7 @@ import * as React from "react"
 import {
   Alert,
   Image,
+  KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
@@ -21,6 +22,7 @@ import { ScreenHeader } from "@/components/screen-header"
 import { TagField } from "@/components/tag-field"
 import { ApiError, type Place } from "@/lib/api"
 import { api } from "@/lib/client"
+import { useKeyboardVisible } from "@/lib/keyboard"
 import { useT } from "@/lib/preferences"
 import { StatusBar } from "@/components/status-bar"
 
@@ -56,6 +58,7 @@ export default function EditSign() {
   const t = useT()
   const styles = useStyles()
   const insets = useSafeAreaInsets()
+  const keyboardVisible = useKeyboardVisible()
   const { id } = useLocalSearchParams<{ id: string }>()
   const [place, setPlace] = React.useState<Place | null>(null)
   const [title, setTitle] = React.useState("")
@@ -155,58 +158,71 @@ export default function EditSign() {
       <StatusBar />
       <ScreenHeader title={t("Modifier le panneau")} backLabel={t("Annuler")} />
 
-      <ScrollView
-        contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
-      >
-        {place ? (
-          <>
-            <Image
-              source={{ uri: api.imageUrl(place.image) }}
-              accessibilityLabel={t("Photo du panneau")}
-              style={styles.photo}
-            />
-            <Field label={t("Intitulé du panneau")}>
-              <Input value={title} onChangeText={setTitle} />
-            </Field>
-            <TagField tags={tags} onChange={setTags} />
-            <Field label={t("Commentaire")} optional={t("(facultatif)")}>
-              <Input
-                placeholder={t("Remarques sur le panneau…")}
-                multiline
-                value={comment}
-                onChangeText={setComment}
-              />
-            </Field>
-            <Button
-              variant="destructive"
-              icon={(props) => <Trash2Icon {...props} />}
-              disabled={pending}
-              onPress={remove}
-            >
-              {t("Supprimer le panneau")}
-            </Button>
-          </>
-        ) : (
-          !error && <Text variant="muted">{t("Chargement…")}</Text>
-        )}
-      </ScrollView>
-
-      <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
-        {error && (
-          <Text accessibilityRole="alert" variant="label" style={styles.error}>
-            {error}
-          </Text>
-        )}
-        <Button
-          size="lg"
-          icon={(props) => <CheckIcon {...props} />}
-          disabled={!place || pending}
-          onPress={save}
+      {/* The form and its button move up with the keyboard. */}
+      <KeyboardAvoidingView behavior="padding" style={styles.form}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
         >
-          {pending ? t("Enregistrement…") : t("Enregistrer")}
-        </Button>
-      </View>
+          {place ? (
+            <>
+              <Image
+                source={{ uri: api.imageUrl(place.image) }}
+                accessibilityLabel={t("Photo du panneau")}
+                style={styles.photo}
+              />
+              <Field label={t("Intitulé du panneau")}>
+                <Input value={title} onChangeText={setTitle} />
+              </Field>
+              <TagField tags={tags} onChange={setTags} />
+              <Field label={t("Commentaire")} optional={t("(facultatif)")}>
+                <Input
+                  placeholder={t("Remarques sur le panneau…")}
+                  multiline
+                  value={comment}
+                  onChangeText={setComment}
+                />
+              </Field>
+              <Button
+                variant="destructive"
+                icon={(props) => <Trash2Icon {...props} />}
+                disabled={pending}
+                onPress={remove}
+              >
+                {t("Supprimer le panneau")}
+              </Button>
+            </>
+          ) : (
+            !error && <Text variant="muted">{t("Chargement…")}</Text>
+          )}
+        </ScrollView>
+
+        {/* Above the keyboard there is no navigation bar to stay clear of. */}
+        <View
+          style={[
+            styles.footer,
+            { paddingBottom: keyboardVisible ? 12 : insets.bottom + 16 },
+          ]}
+        >
+          {error && (
+            <Text
+              accessibilityRole="alert"
+              variant="label"
+              style={styles.error}
+            >
+              {error}
+            </Text>
+          )}
+          <Button
+            size="lg"
+            icon={(props) => <CheckIcon {...props} />}
+            disabled={!place || pending}
+            onPress={save}
+          >
+            {pending ? t("Enregistrement…") : t("Enregistrer")}
+          </Button>
+        </View>
+      </KeyboardAvoidingView>
     </View>
   )
 }
@@ -214,6 +230,7 @@ export default function EditSign() {
 const useStyles = themed((colors) =>
   StyleSheet.create({
     screen: { flex: 1, backgroundColor: colors.background },
+    form: { flex: 1 },
     content: { padding: space.gutter, paddingTop: 18, gap: 18 },
     photo: {
       height: 160,

@@ -1,5 +1,11 @@
 import * as React from "react"
-import { Image, ScrollView, StyleSheet, View } from "react-native"
+import {
+  Image,
+  KeyboardAvoidingView,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Redirect, router } from "expo-router"
 import { RotateCcwIcon, SendIcon } from "lucide-react-native"
@@ -18,6 +24,7 @@ import { api } from "@/lib/client"
 import { formatCoordinates, useDraft } from "@/lib/draft"
 import { placeName } from "@/lib/geocode"
 import { readPhoto } from "@/lib/photo"
+import { useKeyboardVisible } from "@/lib/keyboard"
 import { useT } from "@/lib/preferences"
 import { StatusBar } from "@/components/status-bar"
 
@@ -25,6 +32,7 @@ export default function NewSign() {
   const t = useT()
   const styles = useStyles()
   const insets = useSafeAreaInsets()
+  const keyboardVisible = useKeyboardVisible()
   const [title, setTitle] = React.useState("")
   const [tags, setTags] = React.useState<string[]>([])
   const [comment, setComment] = React.useState("")
@@ -120,89 +128,102 @@ export default function NewSign() {
         }
       />
 
-      <ScrollView
-        contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View accessibilityLabel={t("Photo")} style={styles.photo}>
-          <Image
-            source={{ uri: photoUri }}
-            accessibilityLabel={t("Photo du panneau")}
-            style={StyleSheet.absoluteFill}
-          />
-          <Button
-            size="sm"
-            inverted
-            icon={(props) => <RotateCcwIcon {...props} size={16} />}
-            style={styles.retake}
-            onPress={() => router.back()}
-          >
-            {t("Reprendre")}
-          </Button>
-        </View>
-
-        <View accessibilityLabel={t("Position")} style={styles.position}>
-          {/* A preview: touches go to the scroll view, not the map. */}
-          <View pointerEvents="none" style={styles.miniMap}>
-            <PositionMap position={position} />
-          </View>
-          <View style={styles.positionRow}>
-            <View style={styles.positionText}>
-              <Text variant="label">{formatCoordinates(position)}</Text>
-              <Text variant="muted">
-                {draft.adjusted
-                  ? t("Position ajustée à la main")
-                  : position.accuracy !== null
-                    ? `±${Math.round(position.accuracy)} m`
-                    : t("Position GPS")}
-              </Text>
-            </View>
+      {/* The form and its button move up with the keyboard. */}
+      <KeyboardAvoidingView behavior="padding" style={styles.form}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View accessibilityLabel={t("Photo")} style={styles.photo}>
+            <Image
+              source={{ uri: photoUri }}
+              accessibilityLabel={t("Photo du panneau")}
+              style={StyleSheet.absoluteFill}
+            />
             <Button
               size="sm"
-              variant="ghost"
-              style={styles.adjust}
-              onPress={() => router.push("/adjust-position")}
+              inverted
+              icon={(props) => <RotateCcwIcon {...props} size={16} />}
+              style={styles.retake}
+              onPress={() => router.back()}
             >
-              {t("Ajuster")}
+              {t("Reprendre")}
             </Button>
           </View>
-        </View>
 
-        <Field label={t("Intitulé du panneau")}>
-          <Input
-            placeholder={t("Ex. : Ici, la Région finance…")}
-            value={title}
-            onChangeText={setTitle}
-          />
-        </Field>
+          <View accessibilityLabel={t("Position")} style={styles.position}>
+            {/* A preview: touches go to the scroll view, not the map. */}
+            <View pointerEvents="none" style={styles.miniMap}>
+              <PositionMap position={position} />
+            </View>
+            <View style={styles.positionRow}>
+              <View style={styles.positionText}>
+                <Text variant="label">{formatCoordinates(position)}</Text>
+                <Text variant="muted">
+                  {draft.adjusted
+                    ? t("Position ajustée à la main")
+                    : position.accuracy !== null
+                      ? `±${Math.round(position.accuracy)} m`
+                      : t("Position GPS")}
+                </Text>
+              </View>
+              <Button
+                size="sm"
+                variant="ghost"
+                style={styles.adjust}
+                onPress={() => router.push("/adjust-position")}
+              >
+                {t("Ajuster")}
+              </Button>
+            </View>
+          </View>
 
-        <TagField tags={tags} onChange={setTags} />
+          <Field label={t("Intitulé du panneau")}>
+            <Input
+              placeholder={t("Ex. : Ici, la Région finance…")}
+              value={title}
+              onChangeText={setTitle}
+            />
+          </Field>
 
-        <Field label={t("Commentaire")} optional={t("(facultatif)")}>
-          <Input
-            placeholder={t("Remarques sur le panneau…")}
-            multiline
-            value={comment}
-            onChangeText={setComment}
-          />
-        </Field>
-      </ScrollView>
+          <TagField tags={tags} onChange={setTags} />
 
-      <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
-        {error && (
-          <Text accessibilityRole="alert" variant="label" style={styles.error}>
-            {error}
-          </Text>
-        )}
-        <Button
-          size="lg"
-          icon={(props) => <SendIcon {...props} />}
-          disabled={pending}
-          onPress={publish}
+          <Field label={t("Commentaire")} optional={t("(facultatif)")}>
+            <Input
+              placeholder={t("Remarques sur le panneau…")}
+              multiline
+              value={comment}
+              onChangeText={setComment}
+            />
+          </Field>
+        </ScrollView>
+
+        {/* Above the keyboard there is no navigation bar to stay clear of. */}
+        <View
+          style={[
+            styles.footer,
+            { paddingBottom: keyboardVisible ? 12 : insets.bottom + 16 },
+          ]}
         >
-          {pending ? t("Publication…") : t("Publier le panneau")}
-        </Button>
-      </View>
+          {error && (
+            <Text
+              accessibilityRole="alert"
+              variant="label"
+              style={styles.error}
+            >
+              {error}
+            </Text>
+          )}
+          <Button
+            size="lg"
+            icon={(props) => <SendIcon {...props} />}
+            disabled={pending}
+            onPress={publish}
+          >
+            {pending ? t("Publication…") : t("Publier le panneau")}
+          </Button>
+        </View>
+      </KeyboardAvoidingView>
     </View>
   )
 }
@@ -210,6 +231,7 @@ export default function NewSign() {
 const useStyles = themed((colors) =>
   StyleSheet.create({
     screen: { flex: 1, backgroundColor: colors.background },
+    form: { flex: 1 },
     step: { paddingRight: 8, fontSize: 14 },
     content: { padding: space.gutter, paddingTop: 18, gap: 18 },
     photo: {
