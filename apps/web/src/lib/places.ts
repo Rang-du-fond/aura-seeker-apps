@@ -15,7 +15,8 @@ export type Position = { latitude: number; longitude: number }
 
 // "/api" is proxied to the API by Vite (see vite.config.ts): the API sends no
 // CORS headers, so the browser has to reach it on the app's own origin.
-const apiUrl = (import.meta.env.VITE_API_URL ?? "/api").replace(/\/$/, "")
+// `||`: an empty VITE_API_URL (an unset Docker build argument) means unset.
+const apiUrl = (import.meta.env.VITE_API_URL || "/api").replace(/\/$/, "")
 
 type ApiPlace = {
   id: string

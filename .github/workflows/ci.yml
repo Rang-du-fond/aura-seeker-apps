@@ -18,6 +18,9 @@ permissions:
 
 env:
   IMAGE: ghcr.io/${{ github.repository_owner }}/aura-seeker-web
+  # The API the published web app calls, compiled into it. That API must allow
+  # the web app's origin (CORS). Override with a repository variable.
+  API_URL: ${{ vars.API_URL || 'https://api.aura-seeker.matheo-galuba.com' }}
   # No interactive terminal UI and no telemetry from turbo in CI.
   TURBO_UI: "false"
   TURBO_TELEMETRY_DISABLED: "1"
@@ -77,6 +80,8 @@ jobs:
         with:
           context: .
           file: apps/web/Dockerfile
+          build-args: |
+            VITE_API_URL=${{ env.API_URL }}
           load: true
           tags: ci-local:test
           cache-from: type=gha,scope=web
@@ -91,6 +96,8 @@ jobs:
             sleep 1
           done
           set -x
+          # The API address is compiled into the app.
+          docker exec web sh -c 'grep -rqF "$1" /usr/share/nginx/html/assets' sh "$API_URL"
           # The page, and the same page for a client-side route.
           curl -fsS http://localhost:8080/ | grep -q '<div id="root">'
           curl -fsS 'http://localhost:8080/map?q=test' | grep -q '<div id="root">'
@@ -122,6 +129,8 @@ jobs:
         with:
           context: .
           file: apps/web/Dockerfile
+          build-args: |
+            VITE_API_URL=${{ env.API_URL }}
           push: true
           platforms: linux/amd64        # add linux/arm64 if needed
           tags: ${{ steps.meta.outputs.tags }}

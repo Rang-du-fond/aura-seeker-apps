@@ -24,10 +24,11 @@ COPY --from=prepare /app/out/json/ .
 RUN --mount=type=cache,target=/root/.bun/install/cache \
     bun install --frozen-lockfile
 COPY --from=prepare /app/out/full/ .
-# Where the app looks for the API. "/api" (the default) is proxied by nginx to
-# API_URL at run time; a full URL is called directly by the browser, and that
-# API must then allow the app's origin.
-ARG VITE_API_URL
+# Where the app looks for the API, fixed at build time. A full URL is called
+# directly by the browser: that API must allow the app's origin (CORS). "/api"
+# (the default) stays on the app's origin and is proxied by nginx to API_URL
+# at run time.
+ARG VITE_API_URL=/api
 ENV VITE_API_URL=${VITE_API_URL}
 RUN bun run build --filter=web
 

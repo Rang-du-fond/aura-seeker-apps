@@ -37,10 +37,15 @@ The mobile app is not built in CI.
 
 ```bash
 docker build -f apps/web/Dockerfile -t aura-seeker-web .
-docker run -p 8080:8080 -e API_URL=https://api.example.org aura-seeker-web
+docker run -p 8080:8080 -e API_URL=https://api.example.org aura-seeker-web   # /api proxied
 ```
 
-The image is unprivileged nginx on port 8080. It proxies `/api` to `API_URL` (default `http://api:8080`, no trailing slash), falls back to `index.html` for client-side routes, and caches the hashed files under `/assets` for a year.
+The image is unprivileged nginx on port 8080. It falls back to `index.html` for client-side routes and caches the hashed files under `/assets` for a year.
+
+The API address is compiled into the app by the `VITE_API_URL` build argument:
+
+- **In CI** it is `https://api.aura-seeker.matheo-galuba.com` (override with a repository variable named `API_URL`). The browser calls that API directly, so the API must allow the web app's origin (CORS).
+- **Without the argument** it is `/api`: the app calls its own origin and nginx proxies that to `API_URL` at run time (default `http://api:8080`, no trailing slash). No CORS needed.
 
 ## UI library rules
 
