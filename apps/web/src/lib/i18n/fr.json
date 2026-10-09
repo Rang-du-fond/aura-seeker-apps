@@ -15,9 +15,8 @@
     "changeLanguage": "Changer de langue"
   },
   "footer": {
-    "joke": "Une blague présentée par le collectif RDF.",
-    "unofficialTitle": "Site non officiel",
-    "unofficialText": "Ce site n'est pas affilié à la Région Auvergne-Rhône-Alpes.",
+    "aboutTitle": "Un projet du Rang du fond",
+    "aboutText": "Aura Seeker est un projet humoristique du collectif RDF, « Rang du fond » : une carte participative des panneaux de la Région Auvergne-Rhône-Alpes, photographiés et localisés un par un par ses contributeurs. Ce site n'est pas affilié à la Région Auvergne-Rhône-Alpes.",
     "legal": "Mentions légales",
     "accessibility": "Accessibilité",
     "personalData": "Données personnelles"
@@ -36,10 +35,9 @@
     "appTitleStrong": "Recensez les panneaux",
     "appTitleRest": "avec l'application mobile",
     "appLead": "Une photo, la position GPS et quelques tags : le panneau apparaît sur la carte.",
-    "downloadIphone": "Télécharger pour iPhone",
-    "downloadAndroid": "Télécharger pour Android",
-    "qrPlaceholder": "[QR code]",
-    "scanToInstall": "Scannez pour installer",
+    "downloadBeta": "Télécharger la bêta Android",
+    "betaNote": "Version bêta pour Android, publiée sur GitHub : téléchargez le fichier .apk de la dernière version.",
+    "qrLabel": "QR code vers la page de téléchargement",
     "latestTitle": "Derniers panneaux recensés",
     "addedOn": "ajouté le {date}"
   },

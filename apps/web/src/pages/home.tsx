@@ -8,9 +8,11 @@ import { Card, CardContent } from "@workspace/ui/components/card"
 import { Text } from "@workspace/ui/components/text"
 import { cn } from "@workspace/ui/lib/utils"
 
+import { DownloadQr } from "@/components/download-qr"
 import { HeroPattern } from "@/components/hero-pattern"
 import type { MessageKey } from "@/lib/i18n"
 import { useLocale, useT } from "@/lib/language"
+import { betaDownloadUrl } from "@/lib/links"
 import {
   getStatistics,
   searchPanels,
@@ -35,12 +37,6 @@ const statisticTiles: {
     label: "home.statContributors",
     accent: "border-aura-magenta",
   },
-]
-
-// TODO: store links.
-const downloads: { label: MessageKey; href: string }[] = [
-  { label: "home.downloadIphone", href: "#app" },
-  { label: "home.downloadAndroid", href: "#app" },
 ]
 
 const gutter = "px-[clamp(1rem,4vw,3rem)]"
@@ -175,25 +171,16 @@ export function Home() {
             <Text>{t("home.appLead")}</Text>
           </div>
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex flex-col gap-2.5">
-              {downloads.map(({ label, href }) => (
-                <Button key={label} asChild size="lg">
-                  <a href={href}>
-                    <DownloadIcon data-icon="inline-start" />
-                    {t(label)}
-                  </a>
-                </Button>
-              ))}
+            <div className="flex max-w-[320px] flex-col gap-2.5">
+              <Button asChild size="lg">
+                <a href={betaDownloadUrl} target="_blank" rel="noreferrer">
+                  <DownloadIcon data-icon="inline-start" />
+                  {t("home.downloadBeta")}
+                </a>
+              </Button>
+              <Text variant="muted">{t("home.betaNote")}</Text>
             </div>
-            <div className="flex flex-col items-center gap-1.5">
-              <Text
-                variant="muted"
-                className="grid size-32 place-items-center rounded-xl border-2 border-dashed border-input bg-background"
-              >
-                {t("home.qrPlaceholder")}
-              </Text>
-              <Text variant="muted">{t("home.scanToInstall")}</Text>
-            </div>
+            <DownloadQr label={t("home.qrLabel")} className="size-32" />
           </div>
         </div>
       </section>

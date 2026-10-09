@@ -10,7 +10,8 @@
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
-    "build:hero": "bun scripts/build-hero-pattern.ts"
+    "build:hero": "bun scripts/build-hero-pattern.ts",
+    "build:qr": "bun scripts/build-qr.ts"
   },
   "dependencies": {
     "@workspace/ui": "workspace:*",
@@ -34,6 +35,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
     "globals": "^17",
+    "qrcode-generator": "^2.0.4",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8",
     "vite": "^8"

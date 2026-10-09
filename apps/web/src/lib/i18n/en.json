@@ -15,9 +15,8 @@
     "changeLanguage": "Change the language"
   },
   "footer": {
-    "joke": "A joke presented by the RDF collective.",
-    "unofficialTitle": "Unofficial site",
-    "unofficialText": "This site is not affiliated with the Auvergne-Rhône-Alpes Region.",
+    "aboutTitle": "A Rang du fond project",
+    "aboutText": "Aura Seeker is a humorous project by the RDF collective, “Rang du fond”: a collaborative map of the Auvergne-Rhône-Alpes Region's signs, photographed and located one by one by its contributors. This site is not affiliated with the Auvergne-Rhône-Alpes Region.",
     "legal": "Legal notice",
     "accessibility": "Accessibility",
     "personalData": "Personal data"
@@ -36,10 +35,9 @@
     "appTitleStrong": "Record the signs",
     "appTitleRest": "with the mobile app",
     "appLead": "One photo, the GPS position and a few tags: the sign appears on the map.",
-    "downloadIphone": "Download for iPhone",
-    "downloadAndroid": "Download for Android",
-    "qrPlaceholder": "[QR code]",
-    "scanToInstall": "Scan to install",
+    "downloadBeta": "Download the Android beta",
+    "betaNote": "Beta version for Android, published on GitHub: download the .apk file of the latest release.",
+    "qrLabel": "QR code to the download page",
     "latestTitle": "Latest signs recorded",
     "addedOn": "added on {date}"
   },
