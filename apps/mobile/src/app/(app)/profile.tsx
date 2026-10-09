@@ -11,16 +11,20 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 import Constants from "expo-constants"
 import { router } from "expo-router"
 import {
+  AccessibilityIcon,
   CheckIcon,
   ChevronDownIcon,
   ChevronRightIcon,
   CircleHelpIcon,
+  ExternalLinkIcon,
+  FileTextIcon,
   GlobeIcon,
   KeyRoundIcon,
   LockIcon,
   LogOutIcon,
   MailIcon,
   PlusIcon,
+  ScaleIcon,
   ScanLineIcon,
   ShieldIcon,
   SunMoonIcon,
@@ -42,6 +46,7 @@ import { ScreenHeader } from "@/components/screen-header"
 import { ApiError, type LinkedIdentity, type Passkey } from "@/lib/api"
 import { api } from "@/lib/client"
 import { languages, type MessageKey } from "@/lib/i18n"
+import { openWebPage, type WebPage } from "@/lib/links"
 import { getGoogleIdToken } from "@/lib/google"
 import { createPasskey } from "@/lib/passkeys"
 import { authErrorMessage, useSession, useUser } from "@/lib/session"
@@ -70,6 +75,17 @@ const helpRows: (Row & {
     to: "/rules?review=1",
   },
   { Icon: ShieldIcon, label: "common.personalData", to: "/personal-data" },
+]
+
+// Pages of the web app, opened in the browser.
+const legalRows: (Row & { page: WebPage })[] = [
+  { Icon: ScaleIcon, label: "profile.legalNotice", page: "/legal" },
+  {
+    Icon: AccessibilityIcon,
+    label: "profile.accessibility",
+    page: "/accessibility",
+  },
+  { Icon: FileTextIcon, label: "profile.privacyPolicy", page: "/privacy" },
 ]
 
 // Each language under its own name, whatever the app's language is.
@@ -217,6 +233,10 @@ export default function Profile() {
 
         <Section title={t("profile.help")}>
           <LinkRows rows={helpRows} />
+        </Section>
+
+        <Section title={t("profile.legalSection")}>
+          <LinkRows rows={legalRows} />
         </Section>
 
         <Button
@@ -811,16 +831,18 @@ function Section({
   )
 }
 
-function LinkRows({ rows }: { rows: typeof helpRows }) {
+function LinkRows({ rows }: { rows: typeof helpRows | typeof legalRows }) {
   const colors = useColors()
   const styles = useStyles()
   const t = useT()
 
-  return rows.map(({ Icon, label, to }, index) => (
+  return rows.map(({ Icon, label, ...target }, index) => (
     <Pressable
       key={label}
-      accessibilityRole="button"
-      onPress={() => router.push(to)}
+      accessibilityRole={"page" in target ? "link" : "button"}
+      onPress={() =>
+        "page" in target ? openWebPage(target.page) : router.push(target.to)
+      }
       style={({ pressed }) => [
         styles.row,
         index > 0 && styles.rowDivider,
@@ -829,7 +851,11 @@ function LinkRows({ rows }: { rows: typeof helpRows }) {
     >
       <Icon color={colors.mutedForeground} size={20} />
       <Text style={styles.rowLabel}>{t(label)}</Text>
-      <ChevronRightIcon color={colors.input} size={18} />
+      {"page" in target ? (
+        <ExternalLinkIcon color={colors.input} size={18} />
+      ) : (
+        <ChevronRightIcon color={colors.input} size={18} />
+      )}
     </Pressable>
   ))
 }

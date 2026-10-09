@@ -12,6 +12,7 @@ import { themed, useColors } from "@workspace/ui/native/theme"
 import { AuthShell } from "@/components/auth-shell"
 import { OtherSignIn } from "@/components/other-sign-in"
 import { PasswordInput } from "@/components/password-input"
+import { openWebPage } from "@/lib/links"
 import { firstScreen } from "@/lib/permissions"
 import { authErrorMessage, useSession } from "@/lib/session"
 import { useT } from "@/lib/preferences"
@@ -133,11 +134,19 @@ export default function Signup() {
       >
         <Text style={styles.terms}>
           {t("signup.iAccept")}{" "}
-          <Text style={[styles.terms, styles.link]}>
+          <Text
+            accessibilityRole="link"
+            style={[styles.terms, styles.link]}
+            onPress={() => openWebPage("/legal")}
+          >
             {t("signup.termsUse")}
           </Text>{" "}
           {t("signup.andThe")}{" "}
-          <Text style={[styles.terms, styles.link]}>
+          <Text
+            accessibilityRole="link"
+            style={[styles.terms, styles.link]}
+            onPress={() => openWebPage("/privacy")}
+          >
             {t("signup.privacyPolicy")}
           </Text>
           .

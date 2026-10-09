@@ -1,6 +1,10 @@
 import * as React from "react"
 import { StyleSheet, View } from "react-native"
-import { LogOutIcon, SmartphoneIcon } from "lucide-react-native"
+import {
+  ExternalLinkIcon,
+  LogOutIcon,
+  SmartphoneIcon,
+} from "lucide-react-native"
 
 import { Button } from "@workspace/ui/native/button"
 import { Text } from "@workspace/ui/native/text"
@@ -9,6 +13,7 @@ import { themed, useColors } from "@workspace/ui/native/theme"
 import { InfoItem, InfoScreen, InfoSection } from "@/components/info"
 import type { ActiveSession } from "@/lib/api"
 import { api } from "@/lib/client"
+import { openWebPage } from "@/lib/links"
 import { useLocale, useT } from "@/lib/preferences"
 import { authErrorMessage, useSession } from "@/lib/session"
 
@@ -142,6 +147,15 @@ export default function PersonalData() {
           {t("personalData.deletingAccountNotPossible")}
         </InfoItem>
       </InfoSection>
+
+      <Button
+        variant="ghost"
+        accessibilityRole="link"
+        iconEnd={(props) => <ExternalLinkIcon {...props} />}
+        onPress={() => openWebPage("/privacy")}
+      >
+        {t("personalData.readFullPolicy")}
+      </Button>
     </InfoScreen>
   )
 }

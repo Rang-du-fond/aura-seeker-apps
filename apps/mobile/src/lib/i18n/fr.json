@@ -102,7 +102,7 @@
   },
   "help": {
     "about": "À propos",
-    "appNotAffiliatedAuvergne": "Cette application n'est pas affiliée à la Région Auvergne-Rhône-Alpes. C'est une blague présentée par le collectif RDF, « Rang du fond ».",
+    "appNotAffiliatedAuvergne": "Cette application n'est pas affiliée à la Région Auvergne-Rhône-Alpes. C'est un projet humoristique présenté par le collectif RDF, « Rang du fond ».",
     "checkSpamFolderNew": "Regardez dans les courriers indésirables. Un nouveau code peut être demandé après 45 secondes ; seul le dernier reçu est valable.",
     "contact": "Contact",
     "contactAddressNotSet": "L'adresse de contact n'est pas encore configurée.",
@@ -218,6 +218,7 @@
     "onlyChooseContinueGoogle": "Seulement si vous choisissez « Continuer avec Google » : Google confirme alors votre identité et votre adresse e-mail.",
     "outsideServices": "Services extérieurs",
     "ownPositionNotStored": "Votre propre position n'est pas enregistrée : seule la position du panneau que vous publiez l'est.",
+    "readFullPolicy": "Lire la politique complète sur le site",
     "signIns": "Vos connexions",
     "signOut": "Déconnecter",
     "signOutEverywhere": "Se déconnecter partout",
@@ -230,6 +231,7 @@
     "whatEveryoneSee": "Ce qui est visible par tous"
   },
   "profile": {
+    "accessibility": "Accessibilité",
     "account": "Compte",
     "add": "Ajouter",
     "addPasskey": "Ajouter une clé d'accès",
@@ -249,6 +251,8 @@
     "help": "Aide",
     "identity": "Identité",
     "language": "Langue",
+    "legalNotice": "Mentions légales",
+    "legalSection": "Informations légales",
     "light": "Clair",
     "linkGoogleAccountSame": "Reliez le compte Google qui a la même adresse e-mail que ce compte ({email}) pour vous connecter sans mot de passe.",
     "linkMyGoogleAccount": "Relier mon compte Google",
@@ -263,6 +267,7 @@
     "passkeyUsedOn": "utilisée le {date}",
     "passkeys": "Clés d'accès",
     "preferences": "Préférences",
+    "privacyPolicy": "Politique de confidentialité",
     "removeGoogle": "Retirer Google",
     "signMethods": "Méthodes de connexion",
     "signOut": "Se déconnecter",
