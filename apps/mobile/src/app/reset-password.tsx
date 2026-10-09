@@ -32,7 +32,7 @@ export default function ResetPassword() {
 
   async function sendCode() {
     if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
-      setError(t("Saisissez une adresse e-mail valide."))
+      setError(t("common.enterValidEmailAddress"))
       return
     }
     setError(null)
@@ -48,12 +48,12 @@ export default function ResetPassword() {
 
   async function changePassword() {
     if (code.length !== codeLength) {
-      setError(t("Saisissez le code à 6 chiffres."))
+      setError(t("common.enterCode"))
       return
     }
     if (password.length < minPasswordLength) {
       setError(
-        t("Le mot de passe doit contenir au moins {count} caractères.", {
+        t("common.passwordMustLeastCharacters", {
           count: minPasswordLength,
         })
       )
@@ -77,30 +77,25 @@ export default function ResetPassword() {
     <AuthShell>
       <View style={styles.intro}>
         <Text variant="h1" accessibilityRole="header">
-          {t("Mot de passe oublié")}
+          {t("resetPassword.forgottenPassword")}
         </Text>
         <Text style={styles.muted}>
           {challenge
-            ? t(
-                "Si un compte existe pour {email}, un code à 6 chiffres vient d'y être envoyé.",
-                { email: email.trim() }
-              )
-            : t(
-                "Recevez par e-mail un code pour choisir un nouveau mot de passe."
-              )}
+            ? t("resetPassword.codeSentIfAccount", { email: email.trim() })
+            : t("resetPassword.getCodeEmailChoose")}
         </Text>
       </View>
 
       {challenge ? (
         <>
           <CodeInput
-            label={t("Code de vérification")}
+            label={t("common.verificationCode")}
             value={code}
             onChange={setCode}
           />
           <Field
-            label={t("Nouveau mot de passe")}
-            hint={t("{count} caractères au minimum.", {
+            label={t("common.newPassword")}
+            hint={t("common.charactersLeast", {
               count: minPasswordLength,
             })}
           >
@@ -112,7 +107,7 @@ export default function ResetPassword() {
           </Field>
         </>
       ) : (
-        <Field label={t("Adresse e-mail")}>
+        <Field label={t("common.emailAddress")}>
           <Input
             placeholder="prenom.nom@exemple.fr"
             keyboardType="email-address"
@@ -137,7 +132,7 @@ export default function ResetPassword() {
         disabled={pending}
         onPress={challenge ? changePassword : sendCode}
       >
-        {challenge ? t("Changer le mot de passe") : t("Envoyer le code")}
+        {challenge ? t("common.changePassword") : t("common.sendCode")}
       </Button>
 
       {challenge && (
@@ -146,7 +141,7 @@ export default function ResetPassword() {
           style={[styles.link, styles.footer]}
           onPress={sendCode}
         >
-          {t("Renvoyer le code")}
+          {t("common.resendCode")}
         </Text>
       )}
     </AuthShell>

@@ -128,12 +128,10 @@ function Capture() {
         ) : (
           permission && (
             <View style={styles.permission}>
-              <Text style={styles.hint}>
-                {t("L'appareil photo n'est pas autorisé.")}
-              </Text>
+              <Text style={styles.hint}>{t("capture.cameraNotAllowed")}</Text>
               {permission.canAskAgain && (
                 <Button size="sm" inverted onPress={() => requestPermission()}>
-                  {t("Autoriser")}
+                  {t("common.allow")}
                 </Button>
               )}
             </View>
@@ -142,9 +140,7 @@ function Capture() {
         <View pointerEvents="none" style={styles.guides}>
           {permission?.granted && (
             <>
-              <Text style={styles.hint}>
-                {t("Cadrez le panneau en entier")}
-              </Text>
+              <Text style={styles.hint}>{t("capture.fitWholeSignFrame")}</Text>
               <View style={styles.frame} />
             </>
           )}
@@ -153,14 +149,14 @@ function Capture() {
 
       <View style={[styles.top, { top: insets.top + 8 }]}>
         <IconButton
-          label={t("Fermer")}
+          label={t("common.close")}
           color={colors.white}
           backgroundColor={overlay}
           icon={(props) => <XIcon {...props} size={22} />}
           onPress={() => router.back()}
         />
         <IconButton
-          label={flash ? t("Flash automatique") : t("Flash désactivé")}
+          label={flash ? t("capture.automaticFlash") : t("capture.flashOff")}
           color={colors.white}
           backgroundColor={overlay}
           icon={(props) =>
@@ -180,7 +176,7 @@ function Capture() {
         {position ? (
           <View>
             <Text style={styles.gpsTitle}>
-              {t("Position GPS trouvée")}
+              {t("capture.gpsPositionFound")}
               {position.accuracy !== null &&
                 ` · ±${Math.round(position.accuracy)} m`}
             </Text>
@@ -191,8 +187,8 @@ function Capture() {
         ) : (
           <Text style={styles.gpsTitle}>
             {locationDenied
-              ? t("Position indisponible")
-              : t("Recherche de la position…")}
+              ? t("capture.positionUnavailable")
+              : t("capture.findingPosition")}
           </Text>
         )}
       </View>
@@ -203,7 +199,7 @@ function Capture() {
             <Image source={{ uri: photoUri }} style={styles.thumbnail} />
           )}
           <Text style={styles.takenLabel}>
-            {position ? t("Photo prise") : t("En attente de la position")}
+            {position ? t("capture.photoTaken") : t("capture.waitingPosition")}
           </Text>
           <Button
             size="sm"
@@ -213,12 +209,12 @@ function Capture() {
             style={styles.next}
             onPress={() => router.push("/new-sign")}
           >
-            {t("Suivant")}
+            {t("capture.next")}
           </Button>
         </View>
         <View style={styles.shutterRow}>
           <IconButton
-            label={t("Choisir dans la galerie")}
+            label={t("capture.chooseGallery")}
             size={52}
             color={colors.white}
             backgroundColor={colors.slate}
@@ -227,7 +223,7 @@ function Capture() {
           />
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={t("Prendre la photo")}
+            accessibilityLabel={t("capture.takePhoto")}
             disabled={!cameraReady}
             style={({ pressed }) => [
               styles.shutter,
@@ -238,7 +234,7 @@ function Capture() {
             <View style={styles.shutterDisc} />
           </Pressable>
           <IconButton
-            label={t("Changer de caméra")}
+            label={t("capture.switchCamera")}
             size={52}
             color={colors.white}
             backgroundColor={colors.slate}

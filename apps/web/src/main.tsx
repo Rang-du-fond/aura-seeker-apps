@@ -5,11 +5,14 @@ import "@workspace/ui/globals.css"
 import "./index.css"
 import { App } from "./App.tsx"
 import { ThemeProvider } from "@workspace/ui/components/theme-provider"
+import { LanguageProvider } from "@/lib/language"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider>
-      <App />
+      <LanguageProvider>
+        <App />
+      </LanguageProvider>
     </ThemeProvider>
   </StrictMode>
 )

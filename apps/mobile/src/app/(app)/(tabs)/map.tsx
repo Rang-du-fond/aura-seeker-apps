@@ -258,7 +258,7 @@ export default function Map() {
       />
 
       <IconButton
-        label={t("Centrer sur ma position")}
+        label={t("map.centreMyPosition")}
         size={48}
         backgroundColor={colors.card}
         icon={(props) => <NavigationIcon {...props} />}
@@ -272,15 +272,13 @@ export default function Map() {
 
       {loadFailed && (
         <View accessibilityRole="alert" style={[styles.card, shadow.card]}>
-          <Text style={styles.cardText}>
-            {t("Les panneaux n'ont pas pu être chargés.")}
-          </Text>
+          <Text style={styles.cardText}>{t("map.signsCouldNotLoaded")}</Text>
         </View>
       )}
 
       {selected && (
         <View
-          accessibilityLabel={t("Panneau sélectionné")}
+          accessibilityLabel={t("map.selectedSign")}
           style={[styles.card, styles.sign, shadow.card]}
           onLayout={({ nativeEvent }) =>
             setCardHeight(nativeEvent.layout.height)
@@ -298,7 +296,7 @@ export default function Map() {
               </Text>
               {position && (
                 <Text variant="muted">
-                  {t("à {distance}", {
+                  {t("map.away", {
                     distance: distance(position, selected),
                   })}
                 </Text>
@@ -319,8 +317,8 @@ export default function Map() {
                 <IconButton
                   label={
                     isLiked(selected.id)
-                      ? t("Ne plus aimer ce panneau")
-                      : t("Aimer ce panneau")
+                      ? t("map.unlikeSign")
+                      : t("map.likeSign")
                   }
                   accessibilityState={{ selected: isLiked(selected.id) }}
                   color={isLiked(selected.id) ? colors.magenta : undefined}
@@ -335,9 +333,7 @@ export default function Map() {
                 />
               )}
               <IconButton
-                label={
-                  detailed ? t("Masquer le détail") : t("Afficher le détail")
-                }
+                label={detailed ? t("map.hideDetails") : t("map.showDetails")}
                 accessibilityState={{ expanded: detailed }}
                 color={detailed ? colors.link : undefined}
                 icon={(props) => <InfoIcon {...props} />}
@@ -349,15 +345,15 @@ export default function Map() {
           {detailed && (
             <View style={styles.detail}>
               <Text style={!selected.description && styles.noComment}>
-                {selected.description || t("Aucun commentaire.")}
+                {selected.description || t("map.noComment")}
               </Text>
               <Text variant="muted">
                 {t(
                   selected.author === user.id
-                    ? "Ajouté par vous le {date}"
+                    ? "map.addedByYou"
                     : authorName
-                      ? "Ajouté par {author} le {date}"
-                      : "Ajouté le {date}",
+                      ? "map.addedByAuthor"
+                      : "map.addedOn",
                   {
                     author: authorName ?? "",
                     date: new Intl.DateTimeFormat(locale, {

@@ -9,8 +9,8 @@ import { themed, useColors } from "@workspace/ui/native/theme"
 import { useT } from "@/lib/preferences"
 
 const tabs = {
-  map: { label: "Carte", Icon: MapIcon },
-  signs: { label: "Mes panneaux", Icon: MapPin },
+  map: { label: "tabs.map", Icon: MapIcon },
+  signs: { label: "tabs.mySigns", Icon: MapPin },
 } as const
 
 // Two tabs around a raised camera button that opens the capture flow.
@@ -48,7 +48,7 @@ function TabBar({ state, navigation }: BottomTabBarProps) {
       {items[0]}
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={t("Ajouter un panneau")}
+        accessibilityLabel={t("common.addSign")}
         style={styles.capture}
         onPress={() => router.push("/capture")}
       >

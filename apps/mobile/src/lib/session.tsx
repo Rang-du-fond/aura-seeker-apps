@@ -267,54 +267,54 @@ export function useUser() {
   }
 }
 
-// French text for the error codes the auth screens can meet.
+// The translation key of the message for each error the auth screens can meet.
 export function authErrorMessage(error: unknown) {
   if (error instanceof GoogleError) {
     return error.code === "unsupported"
-      ? "La connexion avec Google n'est pas disponible sur cet appareil."
+      ? "errors.googleSignNotAvailable"
       : error.code === "cancelled"
-        ? "La connexion avec Google a été annulée."
-        : "La connexion avec Google a échoué. Réessayez."
+        ? "errors.googleSignWasCancelled"
+        : "errors.googleSignFailedTry"
   }
   if (error instanceof PasskeyError) {
     return error.code === "unsupported"
-      ? "Les clés d'accès ne sont pas disponibles sur cet appareil."
+      ? "errors.passkeysNotAvailableDevice"
       : error.code === "cancelled"
-        ? "Aucune clé d'accès n'a été utilisée."
-        : "La clé d'accès n'a pas pu être utilisée. Réessayez."
+        ? "errors.noPasskeyWasUsed"
+        : "errors.passkeyCouldNotUsed"
   }
   const code = error instanceof ApiError ? error.code : ""
   switch (code) {
     case "invalid_credentials":
-      return "Adresse e-mail ou mot de passe incorrect."
+      return "errors.wrongEmailAddressPassword"
     case "invalid_password":
-      return "Le mot de passe doit contenir entre 12 et 128 caractères."
+      return "errors.passwordLength"
     case "breached_password":
-      return "Ce mot de passe figure dans des fuites de données. Choisissez-en un autre."
+      return "errors.passwordAppearsDataBreaches"
     case "invalid_id_token":
-      return "Google n'a pas pu confirmer votre identité. Réessayez."
+      return "errors.googleCouldNotConfirm"
     case "provider_email_unverified":
-      return "L'adresse e-mail de ce compte Google n'est pas vérifiée."
+      return "errors.googleAccountsEmailAddress"
     case "provider_email_mismatch":
-      return "Ce compte Google n'a pas la même adresse e-mail que votre compte."
+      return "errors.googleAccountDoesNot"
     case "identity_already_linked":
-      return "Ce compte Google est déjà relié à un autre compte."
+      return "errors.googleAccountAlreadyLinked"
     case "last_login_method":
-      return "C'est votre seule méthode de connexion : ajoutez-en une autre avant de la retirer."
+      return "errors.onlySignMethodAdd"
     case "invalid_passkey":
-      return "Cette clé d'accès n'est pas reconnue."
+      return "errors.passkeyNotRecognised"
     case "step_up_required":
-      return "Par sécurité, reconnectez-vous puis réessayez."
+      return "errors.securitySignAgainRetry"
     case "invalid_code":
-      return "Ce code est incorrect."
+      return "errors.codeWrong"
     case "challenge_expired":
     case "too_many_attempts":
-      return "Ce code n'est plus valable. Demandez-en un nouveau."
+      return "errors.codeNoLongerValid"
     case "rate_limited":
-      return "Trop de tentatives. Réessayez dans quelques minutes."
+      return "errors.tooManyAttemptsTry"
     case "network":
-      return "Impossible de joindre le serveur. Vérifiez votre connexion."
+      return "errors.serverCantReachedCheck"
     default:
-      return "Une erreur est survenue. Réessayez dans un instant."
+      return "errors.somethingWentWrongTry"
   }
 }

@@ -54,7 +54,7 @@ export function OtherSignIn({
     <View style={styles.holder}>
       <View style={styles.divider}>
         <View style={styles.rule} />
-        <Text variant="muted">{t("ou")}</Text>
+        <Text variant="muted">{t("otherSignIn.or")}</Text>
         <View style={styles.rule} />
       </View>
       <Button
@@ -63,7 +63,7 @@ export function OtherSignIn({
         disabled={pending}
         onPress={onGoogle ?? soon}
       >
-        {t("Continuer avec Google")}
+        {t("otherSignIn.continueGoogle")}
       </Button>
       <Button
         variant="secondary"
@@ -71,11 +71,11 @@ export function OtherSignIn({
         disabled={pending}
         onPress={onPasskey ?? soon}
       >
-        {t("Utiliser une clé d'accès")}
+        {t("otherSignIn.usePasskey")}
       </Button>
       {notice && (
         <Text accessibilityRole="alert" variant="muted" style={styles.notice}>
-          {t("Cette méthode de connexion arrive bientôt.")}
+          {t("otherSignIn.signMethodComingSoon")}
         </Text>
       )}
     </View>

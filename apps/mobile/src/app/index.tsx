@@ -45,24 +45,24 @@ export default function Welcome() {
       <View style={styles.pitch}>
         <Text variant="display" accessibilityRole="header" style={styles.white}>
           <Text variant="display" style={[styles.white, styles.black]}>
-            {t("Recensez")}
+            {t("welcome.record")}
           </Text>
           {"\n"}
-          {t("les panneaux de la Région")}
+          {t("welcome.regionsSigns")}
         </Text>
         <Text variant="lead" style={styles.white}>
-          {t("Une photo, votre position, c'est sur la carte.")}
+          {t("welcome.onePhotoPositionMap")}
         </Text>
       </View>
 
       <View style={styles.actions}>
         {expired && (
           <Text accessibilityRole="alert" style={[styles.white, styles.notice]}>
-            {t("Votre session a expiré. Reconnectez-vous pour continuer.")}
+            {t("welcome.sessionExpiredSignAgain")}
           </Text>
         )}
         <Button size="lg" inverted onPress={() => router.push("/login")}>
-          {t("Se connecter")}
+          {t("common.signIn")}
         </Button>
         <Button
           size="lg"
@@ -70,7 +70,7 @@ export default function Welcome() {
           inverted
           onPress={() => router.push("/signup")}
         >
-          {t("Créer un compte")}
+          {t("common.createAccount")}
         </Button>
       </View>
     </View>

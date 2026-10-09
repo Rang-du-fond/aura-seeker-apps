@@ -79,7 +79,7 @@ export default function NewSign() {
 
   async function publish() {
     if (!title.trim()) {
-      setError(t("Donnez un intitulé au panneau."))
+      setError(t("common.giveSignTitle"))
       return
     }
     setError(null)
@@ -104,12 +104,10 @@ export default function NewSign() {
     } catch (caught) {
       setError(
         caught instanceof ApiError && caught.code === "network"
-          ? t(
-              "Impossible de joindre le serveur. Le panneau n'a pas été publié."
-            )
+          ? t("newSign.serverCantReachedSign")
           : caught instanceof ApiError && caught.status === 401
-            ? t("Votre session a expiré. Reconnectez-vous pour publier.")
-            : t("Le panneau n'a pas pu être publié. Réessayez.")
+            ? t("newSign.sessionExpiredSignAgain")
+            : t("newSign.signCouldNotPublished")
       )
       setPending(false)
     }
@@ -119,11 +117,11 @@ export default function NewSign() {
     <View style={styles.screen}>
       <StatusBar />
       <ScreenHeader
-        title={t("Nouveau panneau")}
-        backLabel={t("Retour aux photos")}
+        title={t("common.newSign")}
+        backLabel={t("newSign.backPhotos")}
         trailing={
           <Text variant="muted" style={styles.step}>
-            {t("Étape 2 / 2")}
+            {t("newSign.step")}
           </Text>
         }
       />
@@ -134,10 +132,10 @@ export default function NewSign() {
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
         >
-          <View accessibilityLabel={t("Photo")} style={styles.photo}>
+          <View accessibilityLabel={t("newSign.photo")} style={styles.photo}>
             <Image
               source={{ uri: photoUri }}
-              accessibilityLabel={t("Photo du panneau")}
+              accessibilityLabel={t("common.photoSign")}
               style={StyleSheet.absoluteFill}
             />
             <Button
@@ -147,11 +145,14 @@ export default function NewSign() {
               style={styles.retake}
               onPress={() => router.back()}
             >
-              {t("Reprendre")}
+              {t("newSign.retake")}
             </Button>
           </View>
 
-          <View accessibilityLabel={t("Position")} style={styles.position}>
+          <View
+            accessibilityLabel={t("newSign.position")}
+            style={styles.position}
+          >
             {/* A preview: touches go to the scroll view, not the map. */}
             <View pointerEvents="none" style={styles.miniMap}>
               <PositionMap position={position} />
@@ -161,10 +162,10 @@ export default function NewSign() {
                 <Text variant="label">{formatCoordinates(position)}</Text>
                 <Text variant="muted">
                   {draft.adjusted
-                    ? t("Position ajustée à la main")
+                    ? t("newSign.positionAdjustedHand")
                     : position.accuracy !== null
                       ? `±${Math.round(position.accuracy)} m`
-                      : t("Position GPS")}
+                      : t("newSign.gpsPosition")}
                 </Text>
               </View>
               <Button
@@ -173,14 +174,14 @@ export default function NewSign() {
                 style={styles.adjust}
                 onPress={() => router.push("/adjust-position")}
               >
-                {t("Ajuster")}
+                {t("newSign.adjust")}
               </Button>
             </View>
           </View>
 
-          <Field label={t("Intitulé du panneau")}>
+          <Field label={t("common.titleSign")}>
             <Input
-              placeholder={t("Ex. : Ici, la Région finance…")}
+              placeholder={t("newSign.eGHereRegion")}
               value={title}
               onChangeText={setTitle}
             />
@@ -188,9 +189,9 @@ export default function NewSign() {
 
           <TagField tags={tags} onChange={setTags} />
 
-          <Field label={t("Commentaire")} optional={t("(facultatif)")}>
+          <Field label={t("common.comment")} optional={t("common.optional")}>
             <Input
-              placeholder={t("Remarques sur le panneau…")}
+              placeholder={t("common.notesAboutSign")}
               multiline
               value={comment}
               onChangeText={setComment}
@@ -220,7 +221,7 @@ export default function NewSign() {
             disabled={pending}
             onPress={publish}
           >
-            {pending ? t("Publication…") : t("Publier le panneau")}
+            {pending ? t("newSign.publishing") : t("newSign.publishSign")}
           </Button>
         </View>
       </KeyboardAvoidingView>

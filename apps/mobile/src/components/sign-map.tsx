@@ -156,7 +156,7 @@ export function SignMap({
     <MapFrame
       state={state}
       onMessage={onMessage}
-      title={t("Carte des panneaux")}
+      title={t("signMap.mapSigns")}
     />
   )
 }
@@ -194,7 +194,7 @@ export function PositionMap({
     <MapFrame
       state={state}
       onMessage={onMessage}
-      title={t("Position du panneau")}
+      title={t("signMap.positionSign")}
     />
   )
 }

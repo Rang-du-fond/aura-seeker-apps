@@ -36,7 +36,7 @@ export function AuthShell({
         <BrandPattern opacity={0.18} />
         <View style={styles.headerRow}>
           <IconButton
-            label={t("Retour")}
+            label={t("authShell.back")}
             color={colors.white}
             backgroundColor="rgba(255, 255, 255, 0.2)"
             icon={(props) => <ChevronLeftIcon {...props} size={22} />}

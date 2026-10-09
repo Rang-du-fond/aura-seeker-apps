@@ -10,7 +10,7 @@ import { radius } from "@workspace/ui/native/tokens"
 
 import type { TagUsage } from "@/lib/api"
 import { api } from "@/lib/client"
-import { useCount, useT } from "@/lib/preferences"
+import { useT } from "@/lib/preferences"
 
 const maxSuggestions = 5
 
@@ -31,7 +31,6 @@ export function TagField({
   onChange: (tags: string[]) => void
 }) {
   const t = useT()
-  const count = useCount()
   const colors = useColors()
   const styles = useStyles()
   const [tagDraft, setTagDraft] = React.useState("")
@@ -87,10 +86,10 @@ export function TagField({
   }
 
   return (
-    <Field label={t("Tags")}>
+    <Field label={t("common.tags")}>
       <Input
-        placeholder={t("Rechercher un tag…")}
-        accessibilityLabel={t("Rechercher un tag")}
+        placeholder={t("tagField.searchPlaceholder")}
+        accessibilityLabel={t("tagField.search")}
         returnKeyType="search"
         autoCapitalize="none"
         autoCorrect={false}
@@ -107,12 +106,15 @@ export function TagField({
         submitBehavior="submit"
       />
       {(suggestions.length > 0 || canCreate) && (
-        <View accessibilityLabel={t("Résultats")} style={styles.suggestions}>
+        <View
+          accessibilityLabel={t("tagField.results")}
+          style={styles.suggestions}
+        >
           {suggestions.map(({ name, places }) => (
             <Pressable
               key={name}
               accessibilityRole="button"
-              accessibilityLabel={t("Ajouter le tag {tag}", { tag: name })}
+              accessibilityLabel={t("common.addTag", { tag: name })}
               style={({ pressed }) => [
                 styles.suggestion,
                 pressed && styles.suggestionPressed,
@@ -121,14 +123,14 @@ export function TagField({
             >
               <Text style={styles.suggestionLabel}>{name}</Text>
               <Text variant="muted">
-                {count(places, "{count} panneau", "{count} panneaux")}
+                {t("common.signCount", { count: places })}
               </Text>
             </Pressable>
           ))}
           {canCreate && (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={t("Créer le tag {tag}", { tag: tagQuery })}
+              accessibilityLabel={t("tagField.createTag", { tag: tagQuery })}
               style={({ pressed }) => [
                 styles.suggestion,
                 pressed && styles.suggestionPressed,
@@ -137,18 +139,21 @@ export function TagField({
             >
               <PlusIcon color={colors.link} size={18} />
               <Text style={[styles.suggestionLabel, styles.create]}>
-                {t("Créer « {tag} »", { tag: tagQuery })}
+                {t("tagField.create", { tag: tagQuery })}
               </Text>
             </Pressable>
           )}
         </View>
       )}
       {tags.length > 0 && (
-        <View accessibilityLabel={t("Tags sélectionnés")} style={styles.tags}>
+        <View
+          accessibilityLabel={t("tagField.selectedTags")}
+          style={styles.tags}
+        >
           {tags.map((tag) => (
             <Chip
               key={tag}
-              removeLabel={t("Retirer le tag {tag}", { tag })}
+              removeLabel={t("common.removeTag", { tag })}
               removeIcon={(props) => <XIcon {...props} strokeWidth={2.5} />}
               onRemove={() => setTags(tags.filter((other) => other !== tag))}
             >

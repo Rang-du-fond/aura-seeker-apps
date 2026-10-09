@@ -53,6 +53,17 @@ The API address is compiled into the app by the `VITE_API_URL` build argument:
 - **In CI** it is `https://api.aura-seeker.matheo-galuba.com` (override with a repository variable named `API_URL`). The browser calls that API directly, so the API must allow the web app's origin (CORS).
 - **Without the argument** it is `/api`: the app calls its own origin and nginx proxies that to `API_URL` at run time (default `http://api:8080`, no trailing slash). No CORS needed.
 
+## Translations
+
+Both apps read their texts from catalogs, one JSON file per language, through the same small runtime (`packages/ui/src/lib/i18n.ts`).
+
+- `apps/web/src/lib/i18n/` and `apps/mobile/src/lib/i18n/` each hold `fr.json`, `en.json` and an `index.ts` listing the languages.
+- A text is read by its key: `t("map.search")`, with values `t("signs.hello", { name })`. Keys are grouped by screen (`map.*`, `profile.*`…), with `common.*` for texts used in several places and `errors.*` for error messages.
+- A counted text has one entry per plural form (`signCount_one`, `signCount_other`) and is read without the suffix: `t("common.signCount", { count })`.
+- French is the reference: its catalog defines the keys, so `t("a.typo")` is a type error, and so is a catalog missing a key.
+
+To add a language, copy `fr.json`, translate it, and add one entry to `languages` in that app's `index.ts`. It then appears in the language menu (web header, mobile settings).
+
 ## UI library rules
 
 Every small component (text, buttons, inputs, form fields, …) lives in `packages/ui`. Apps only compose them.

@@ -6,6 +6,7 @@ import Supercluster from "supercluster"
 import { cn } from "@workspace/ui/lib/utils"
 
 import ideogram from "@/assets/logo/ideogram.svg"
+import { useT } from "@/lib/language"
 import type { Panel, Position, View } from "@/lib/places"
 
 import "leaflet/dist/leaflet.css"
@@ -66,6 +67,7 @@ export function PanelMap({
   const markersRef = React.useRef<L.LayerGroup | null>(null)
   const circleRef = React.useRef<L.Circle | null>(null)
   const onSelectRef = React.useRef(onSelect)
+  const t = useT()
 
   React.useEffect(() => {
     onSelectRef.current = onSelect
@@ -157,7 +159,7 @@ export function PanelMap({
           const count = properties.point_count
           L.marker([latitude, longitude], {
             icon: clusterIcon(count),
-            title: `Groupe de ${count} panneaux, zoomer`,
+            title: t("map.clusterLabel", { count }),
           })
             .on("click", () =>
               map.flyTo(
@@ -180,7 +182,7 @@ export function PanelMap({
       if (selected) {
         L.marker([selected.latitude, selected.longitude], {
           icon: panelIcon(true),
-          title: `${selected.title} (sélectionné)`,
+          title: t("map.selectedLabel", { title: selected.title }),
           zIndexOffset: 1000,
         }).addTo(layer)
       }
@@ -192,7 +194,7 @@ export function PanelMap({
     return () => {
       map.off("moveend", draw)
     }
-  }, [index, selected])
+  }, [index, selected, t])
 
   // Bring the selected panel into the part of the map the sheet leaves free.
   const selectedLatitude = selected?.latitude
@@ -240,7 +242,7 @@ export function PanelMap({
         <div className="flex flex-col overflow-hidden rounded-xl shadow-sm">
           <button
             type="button"
-            aria-label="Zoomer"
+            aria-label={t("map.zoomIn")}
             className={cn(controlButton, "border-b")}
             onClick={() => mapRef.current?.zoomIn()}
           >
@@ -248,7 +250,7 @@ export function PanelMap({
           </button>
           <button
             type="button"
-            aria-label="Dézoomer"
+            aria-label={t("map.zoomOut")}
             className={controlButton}
             onClick={() => mapRef.current?.zoomOut()}
           >
@@ -257,7 +259,7 @@ export function PanelMap({
         </div>
         <button
           type="button"
-          aria-label="Centrer sur ma position"
+          aria-label={t("map.centreOnMe")}
           className={cn(controlButton, "rounded-xl shadow-sm")}
           onClick={onLocate}
         >

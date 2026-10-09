@@ -9,6 +9,8 @@ import { Text } from "@workspace/ui/components/text"
 import { cn } from "@workspace/ui/lib/utils"
 
 import { HeroPattern } from "@/components/hero-pattern"
+import type { MessageKey } from "@/lib/i18n"
+import { useLocale, useT } from "@/lib/language"
 import {
   getStatistics,
   searchPanels,
@@ -16,38 +18,46 @@ import {
   type Statistics,
 } from "@/lib/places"
 
-const numberFormat = new Intl.NumberFormat("fr-FR")
-const dateFormat = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long" })
-
 const statisticTiles: {
   key: keyof Statistics
-  label: string
+  label: MessageKey
   accent: string
 }[] = [
-  { key: "total", label: "panneaux recensés", accent: "border-aura-blue" },
+  { key: "total", label: "home.statTotal", accent: "border-aura-blue" },
   {
     key: "lastThirtyDays",
-    label: "ajoutés ces 30 derniers jours",
+    label: "home.statLastThirtyDays",
     accent: "border-aura-green",
   },
-  { key: "tags", label: "tags utilisés", accent: "border-aura-orange" },
+  { key: "tags", label: "home.statTags", accent: "border-aura-orange" },
   {
     key: "contributors",
-    label: "contributeurs",
+    label: "home.statContributors",
     accent: "border-aura-magenta",
   },
 ]
 
 // TODO: store links.
-const downloads = [
-  { label: "Télécharger pour iPhone", href: "#app" },
-  { label: "Télécharger pour Android", href: "#app" },
+const downloads: { label: MessageKey; href: string }[] = [
+  { label: "home.downloadIphone", href: "#app" },
+  { label: "home.downloadAndroid", href: "#app" },
 ]
 
 const gutter = "px-[clamp(1rem,4vw,3rem)]"
 const container = "mx-auto max-w-[1200px]"
 
 export function Home() {
+  const t = useT()
+  const locale = useLocale()
+  const numberFormat = React.useMemo(
+    () => new Intl.NumberFormat(locale),
+    [locale]
+  )
+  const dateFormat = React.useMemo(
+    () => new Intl.DateTimeFormat(locale, { dateStyle: "long" }),
+    [locale]
+  )
+
   const [statistics, setStatistics] = React.useState<Statistics | null>(null)
   const [latestPanels, setLatestPanels] = React.useState<Panel[]>([])
 
@@ -92,23 +102,22 @@ export function Home() {
           )}
         >
           <Text variant="display">
-            <strong>Les panneaux</strong>
+            <strong>{t("home.heroTitleStrong")}</strong>
             <br />
-            de la Région Auvergne-Rhône-Alpes
+            {t("home.heroTitleRest")}
           </Text>
           <Text variant="lead" className="max-w-[580px]">
-            Chantiers financés, établissements, affichage et signalétique :
-            chaque panneau localisé et photographié sur le terrain.
+            {t("home.heroLead")}
           </Text>
           <div className="flex flex-wrap gap-3">
             <Button asChild size="lg">
               <Link to="/map">
-                Explorer la carte
+                {t("home.exploreMap")}
                 <ArrowRightIcon data-icon="inline-end" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="secondary">
-              <a href="#app">Recenser avec l'app</a>
+              <a href="#app">{t("home.recordWithApp")}</a>
             </Button>
           </div>
         </div>
@@ -121,7 +130,7 @@ export function Home() {
         <div className={container}>
           <Text variant="overline" asChild>
             <h2 id="stats-title" className="mb-7">
-              Le parc de panneaux en chiffres
+              {t("home.statsTitle")}
             </h2>
           </Text>
           <dl className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-8">
@@ -130,7 +139,7 @@ export function Home() {
                 key={label}
                 className={cn("flex flex-col gap-2 border-t-3 pt-4", accent)}
               >
-                <dt className="order-2 text-[17px]">{label}</dt>
+                <dt className="order-2 text-[17px]">{t(label)}</dt>
                 <dd className="text-[56px] leading-none font-extrabold">
                   {statistics?.[key] != null
                     ? numberFormat.format(statistics[key])
@@ -156,15 +165,14 @@ export function Home() {
           <div className="flex min-w-0 flex-[1_1_420px] flex-col gap-3">
             <Text variant="h1" asChild>
               <h2 id="app-title">
-                <span className="font-extrabold">Recensez les panneaux</span>
+                <span className="font-extrabold">
+                  {t("home.appTitleStrong")}
+                </span>
                 <br />
-                <span className="font-light">avec l'application mobile</span>
+                <span className="font-light">{t("home.appTitleRest")}</span>
               </h2>
             </Text>
-            <Text>
-              Une photo, la position GPS et quelques tags : le panneau apparaît
-              sur la carte.
-            </Text>
+            <Text>{t("home.appLead")}</Text>
           </div>
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex flex-col gap-2.5">
@@ -172,7 +180,7 @@ export function Home() {
                 <Button key={label} asChild size="lg">
                   <a href={href}>
                     <DownloadIcon data-icon="inline-start" />
-                    {label}
+                    {t(label)}
                   </a>
                 </Button>
               ))}
@@ -182,9 +190,9 @@ export function Home() {
                 variant="muted"
                 className="grid size-32 place-items-center rounded-xl border-2 border-dashed border-input bg-background"
               >
-                [QR code]
+                {t("home.qrPlaceholder")}
               </Text>
-              <Text variant="muted">Scannez pour installer</Text>
+              <Text variant="muted">{t("home.scanToInstall")}</Text>
             </div>
           </div>
         </div>
@@ -193,7 +201,7 @@ export function Home() {
       <section aria-labelledby="latest-title" className={cn("py-20", gutter)}>
         <div className={cn("flex flex-col gap-7", container)}>
           <Text variant="section" id="latest-title">
-            Derniers panneaux recensés
+            {t("home.latestTitle")}
           </Text>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-5">
             {latestPanels.map((panel) => (
@@ -225,7 +233,9 @@ export function Home() {
                       {panel.title}
                     </Text>
                     <Text variant="muted">
-                      ajouté le {dateFormat.format(new Date(panel.createdAt))}
+                      {t("home.addedOn", {
+                        date: dateFormat.format(new Date(panel.createdAt)),
+                      })}
                     </Text>
                   </CardContent>
                 </Card>

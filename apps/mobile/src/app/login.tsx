@@ -43,7 +43,7 @@ export default function Login() {
 
   async function submit() {
     if (!email.trim() || !password) {
-      setError(t("Saisissez votre adresse e-mail et votre mot de passe."))
+      setError(t("login.enterEmailAddressPassword"))
       return
     }
     setError(null)
@@ -73,14 +73,12 @@ export default function Login() {
     <AuthShell>
       <View style={styles.intro}>
         <Text variant="h1" accessibilityRole="header">
-          {t("Connexion")}
+          {t("login.title")}
         </Text>
-        <Text style={styles.muted}>
-          {t("Connectez-vous pour recenser des panneaux.")}
-        </Text>
+        <Text style={styles.muted}>{t("login.signRecordSigns")}</Text>
       </View>
 
-      <Field label={t("Adresse e-mail")}>
+      <Field label={t("common.emailAddress")}>
         <Input
           placeholder="prenom.nom@exemple.fr"
           keyboardType="email-address"
@@ -92,7 +90,7 @@ export default function Login() {
         />
       </Field>
 
-      <Field label={t("Mot de passe")}>
+      <Field label={t("common.password")}>
         <PasswordInput
           autoComplete="current-password"
           value={password}
@@ -110,14 +108,14 @@ export default function Login() {
           }
         >
           <Text variant="label" style={styles.link}>
-            {t("Mot de passe oublié ?")}
+            {t("login.forgotPassword")}
           </Text>
         </Pressable>
       </Field>
 
       {notice === "password-changed" && !error && (
         <Text accessibilityRole="alert" variant="label">
-          {t("Mot de passe modifié. Connectez-vous avec le nouveau.")}
+          {t("login.passwordChangedSignNew")}
         </Text>
       )}
       {error && (
@@ -127,7 +125,7 @@ export default function Login() {
       )}
 
       <Button size="lg" disabled={pending} onPress={submit}>
-        {pending ? t("Connexion…") : t("Se connecter")}
+        {pending ? t("login.signing") : t("common.signIn")}
       </Button>
 
       <OtherSignIn
@@ -137,13 +135,13 @@ export default function Login() {
       />
 
       <Text style={[styles.muted, styles.footer]}>
-        {t("Pas encore de compte ?")}{" "}
+        {t("login.noAccountYet")}{" "}
         <Text
           accessibilityRole="link"
           style={styles.footerLink}
           onPress={() => router.replace("/signup")}
         >
-          {t("Créer un compte")}
+          {t("common.createAccount")}
         </Text>
       </Text>
     </AuthShell>

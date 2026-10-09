@@ -41,11 +41,11 @@ import { PasswordInput } from "@/components/password-input"
 import { ScreenHeader } from "@/components/screen-header"
 import { ApiError, type LinkedIdentity, type Passkey } from "@/lib/api"
 import { api } from "@/lib/client"
+import { languages, type MessageKey } from "@/lib/i18n"
 import { getGoogleIdToken } from "@/lib/google"
 import { createPasskey } from "@/lib/passkeys"
 import { authErrorMessage, useSession, useUser } from "@/lib/session"
 import {
-  useCount,
   useLocale,
   usePreferences,
   useT,
@@ -57,30 +57,31 @@ import { StatusBar } from "@/components/status-bar"
 // The API accepts passwords of 12 to 128 characters.
 const minPasswordLength = 12
 
-type Row = { Icon: LucideIcon; label: string }
+type Row = { Icon: LucideIcon; label: MessageKey }
 
-// Labels are French: they are translated where they are shown.
+// Labels are translation keys: they are translated where they are shown.
 const helpRows: (Row & {
   to: "/help" | "/personal-data" | "/rules?review=1"
 })[] = [
-  { Icon: CircleHelpIcon, label: "Aide et contact", to: "/help" },
+  { Icon: CircleHelpIcon, label: "common.helpContact", to: "/help" },
   {
     Icon: ScanLineIcon,
-    label: "Règles de prise de vue",
+    label: "common.photoRules",
     to: "/rules?review=1",
   },
-  { Icon: ShieldIcon, label: "Données personnelles", to: "/personal-data" },
+  { Icon: ShieldIcon, label: "common.personalData", to: "/personal-data" },
 ]
 
-const languages: { value: Language; label: string }[] = [
-  { value: "fr", label: "Français" },
-  { value: "en", label: "English" },
-]
+// Each language under its own name, whatever the app's language is.
+const languageOptions = (Object.keys(languages) as Language[]).map((value) => ({
+  value,
+  label: languages[value].label,
+}))
 
-const themes: { value: ThemeChoice; label: string }[] = [
-  { value: "system", label: "Système" },
-  { value: "light", label: "Clair" },
-  { value: "dark", label: "Sombre" },
+const themes: { value: ThemeChoice; label: MessageKey }[] = [
+  { value: "system", label: "profile.system" },
+  { value: "light", label: "profile.light" },
+  { value: "dark", label: "profile.dark" },
 ]
 
 export default function Profile() {
@@ -90,7 +91,6 @@ export default function Profile() {
   const insets = useSafeAreaInsets()
   const { signOut } = useSession()
   const { language, setLanguage, theme, setTheme } = usePreferences()
-  const count = useCount()
   // Null until loaded, and when the list could not be read.
   const [identities, setIdentities] = React.useState<LinkedIdentity[] | null>(
     null
@@ -130,8 +130,8 @@ export default function Profile() {
     <View style={styles.screen}>
       <StatusBar />
       <ScreenHeader
-        title={t("Mon profil")}
-        backLabel={t("Retour à mes panneaux")}
+        title={t("profile.myProfile")}
+        backLabel={t("profile.backMySigns")}
       />
 
       <ScrollView
@@ -140,7 +140,10 @@ export default function Profile() {
           { paddingBottom: insets.bottom + 24 },
         ]}
       >
-        <View accessibilityLabel={t("Identité")} style={styles.identity}>
+        <View
+          accessibilityLabel={t("profile.identity")}
+          style={styles.identity}
+        >
           <View style={styles.avatar}>
             <Text style={styles.avatarLabel}>{user.initials}</Text>
           </View>
@@ -151,31 +154,27 @@ export default function Profile() {
             </Text>
             {signCount !== null && (
               <Text variant="muted">
-                {count(
-                  signCount,
-                  "{count} panneau recensé",
-                  "{count} panneaux recensés"
-                )}
+                {t("profile.signsRecorded", { count: signCount })}
               </Text>
             )}
           </View>
         </View>
 
-        <Section title={t("Compte")}>
+        <Section title={t("profile.account")}>
           <ValueRow
             Icon={MailIcon}
-            label={t("Adresse e-mail")}
+            label={t("common.emailAddress")}
             value=""
             onPress={() => setEditing("email")}
           />
         </Section>
 
         {/* The ways to sign in to this account. */}
-        <Section title={t("Méthodes de connexion")}>
+        <Section title={t("profile.signMethods")}>
           <ValueRow
             Icon={LockIcon}
-            label={t("Mot de passe")}
-            value={t("Modifier")}
+            label={t("common.password")}
+            value={t("profile.change")}
             onPress={() => setEditing("password")}
           />
           <ValueRow
@@ -185,38 +184,38 @@ export default function Profile() {
               identities === null
                 ? ""
                 : google
-                  ? (google.email ?? t("Relié"))
-                  : t("Ajouter")
+                  ? (google.email ?? t("profile.linked"))
+                  : t("profile.add")
             }
             divider
             onPress={() => setEditing("google")}
           />
           <ValueRow
             Icon={KeyRoundIcon}
-            label={t("Clés d'accès")}
-            value={t("Gérer")}
+            label={t("profile.passkeys")}
+            value={t("profile.manage")}
             divider
             onPress={() => setEditing("passkeys")}
           />
         </Section>
 
-        <Section title={t("Préférences")}>
+        <Section title={t("profile.preferences")}>
           <ValueRow
             Icon={GlobeIcon}
-            label={t("Langue")}
-            value={languages.find(({ value }) => value === language)!.label}
+            label={t("profile.language")}
+            value={languages[language].label}
             onPress={() => setEditing("language")}
           />
           <ValueRow
             Icon={SunMoonIcon}
-            label={t("Thème")}
+            label={t("profile.theme")}
             value={t(themes.find(({ value }) => value === theme)!.label)}
             divider
             onPress={() => setEditing("theme")}
           />
         </Section>
 
-        <Section title={t("Aide")}>
+        <Section title={t("profile.help")}>
           <LinkRows rows={helpRows} />
         </Section>
 
@@ -226,10 +225,10 @@ export default function Profile() {
           style={styles.logout}
           onPress={signOut}
         >
-          {t("Se déconnecter")}
+          {t("profile.signOut")}
         </Button>
         <Text variant="muted" style={styles.version}>
-          {t("Version {version}", {
+          {t("common.version", {
             version: Constants.expoConfig?.version ?? "",
           })}
         </Text>
@@ -258,16 +257,16 @@ export default function Profile() {
       )}
       {editing === "language" && (
         <ChoiceForm
-          title={t("Langue")}
+          title={t("profile.language")}
           value={language}
-          options={languages}
+          options={languageOptions}
           onSave={setLanguage}
           onClose={() => setEditing(null)}
         />
       )}
       {editing === "theme" && (
         <ChoiceForm
-          title={t("Thème")}
+          title={t("profile.theme")}
           value={theme}
           options={themes.map(({ value, label }) => ({
             value,
@@ -349,7 +348,7 @@ function FormSheet({
   return (
     <Modal transparent animationType="fade" onRequestClose={onClose}>
       <Pressable
-        accessibilityLabel={t("Annuler")}
+        accessibilityLabel={t("common.cancel")}
         style={styles.backdrop}
         onPress={onClose}
       />
@@ -370,7 +369,7 @@ function FormSheet({
           )}
           <View style={styles.formActions}>
             <Button variant="ghost" onPress={onClose}>
-              {onSubmit ? t("Annuler") : t("Fermer")}
+              {onSubmit ? t("common.cancel") : t("common.close")}
             </Button>
             {onSubmit && (
               <Button disabled={pending} onPress={onSubmit}>
@@ -404,7 +403,7 @@ function ChoiceForm<Value extends string>({
   return (
     <FormSheet
       title={title}
-      submitLabel={t("Enregistrer")}
+      submitLabel={t("common.save")}
       onSubmit={() => {
         onSave(choice)
         onClose()
@@ -423,29 +422,30 @@ function ChoiceForm<Value extends string>({
   )
 }
 
-// French text for what can go wrong when changing the email or the password.
+// The translation key of the message for what can go wrong when changing the
+// email or the password.
 function accountErrorMessage(error: unknown) {
   if (error instanceof ApiError) {
     if (error.status === 404) {
-      return "Cette modification n'est pas encore disponible sur le serveur."
+      return "profile.changeNotAvailableServer"
     }
     switch (error.code) {
       case "network":
-        return "Impossible de joindre le serveur. Vérifiez votre connexion."
+        return "errors.serverCantReachedCheck"
       case "invalid_credentials":
-        return "Le mot de passe actuel est incorrect."
+        return "profile.currentPasswordWrong"
       case "invalid_password":
-        return "Le mot de passe doit contenir entre 12 et 128 caractères."
+        return "errors.passwordLength"
       case "invalid_code":
       case "challenge_expired":
       case "too_many_attempts":
-        return "Ce code n'est plus valable. Demandez-en un nouveau."
+        return "errors.codeNoLongerValid"
       case "step_up_required":
-        return "Par sécurité, reconnectez-vous puis réessayez."
+        return "errors.securitySignAgainRetry"
     }
   }
 
-  return "Une erreur est survenue. Réessayez dans un instant."
+  return "errors.somethingWentWrongTry"
 }
 
 function PasswordForm({ onClose }: { onClose: () => void }) {
@@ -457,12 +457,12 @@ function PasswordForm({ onClose }: { onClose: () => void }) {
 
   async function submit() {
     if (!current) {
-      setError(t("Saisissez votre mot de passe actuel."))
+      setError(t("profile.enterCurrentPassword"))
       return
     }
     if (next.length < minPasswordLength) {
       setError(
-        t("Le mot de passe doit contenir au moins {count} caractères.", {
+        t("common.passwordMustLeastCharacters", {
           count: minPasswordLength,
         })
       )
@@ -481,14 +481,14 @@ function PasswordForm({ onClose }: { onClose: () => void }) {
 
   return (
     <FormSheet
-      title={t("Changer le mot de passe")}
+      title={t("common.changePassword")}
       error={error}
-      submitLabel={pending ? t("Enregistrement…") : t("Enregistrer")}
+      submitLabel={pending ? t("common.saving") : t("common.save")}
       pending={pending}
       onSubmit={submit}
       onClose={onClose}
     >
-      <Field label={t("Mot de passe actuel")}>
+      <Field label={t("profile.currentPassword")}>
         <PasswordInput
           autoComplete="current-password"
           value={current}
@@ -496,8 +496,8 @@ function PasswordForm({ onClose }: { onClose: () => void }) {
         />
       </Field>
       <Field
-        label={t("Nouveau mot de passe")}
-        hint={t("{count} caractères au minimum.", { count: minPasswordLength })}
+        label={t("common.newPassword")}
+        hint={t("common.charactersLeast", { count: minPasswordLength })}
       >
         <PasswordInput
           autoComplete="new-password"
@@ -522,11 +522,11 @@ function EmailForm({ onClose }: { onClose: () => void }) {
   async function submit() {
     setError(null)
     if (!challengeId && !/^\S+@\S+\.\S+$/.test(email.trim())) {
-      setError(t("Saisissez une adresse e-mail valide."))
+      setError(t("common.enterValidEmailAddress"))
       return
     }
     if (challengeId && code.length !== 6) {
-      setError(t("Saisissez le code à 6 chiffres."))
+      setError(t("common.enterCode"))
       return
     }
     setPending(true)
@@ -548,17 +548,17 @@ function EmailForm({ onClose }: { onClose: () => void }) {
 
   return (
     <FormSheet
-      title={t("Changer l'adresse e-mail")}
+      title={t("profile.changeEmailAddress")}
       error={error}
-      submitLabel={challengeId ? t("Valider") : t("Envoyer le code")}
+      submitLabel={challengeId ? t("common.confirm") : t("common.sendCode")}
       pending={pending}
       onSubmit={submit}
       onClose={onClose}
     >
       {challengeId ? (
         <Field
-          label={t("Code de vérification")}
-          hint={t("Saisissez le code à 6 chiffres envoyé à {email}.", {
+          label={t("common.verificationCode")}
+          hint={t("common.enterCodeSentTo", {
             email: email.trim(),
           })}
         >
@@ -573,8 +573,8 @@ function EmailForm({ onClose }: { onClose: () => void }) {
         </Field>
       ) : (
         <Field
-          label={t("Nouvelle adresse e-mail")}
-          hint={t("Un code de vérification y sera envoyé.")}
+          label={t("profile.newEmailAddress")}
+          hint={t("profile.verificationCodeSent")}
         >
           <Input
             placeholder="prenom.nom@exemple.fr"
@@ -638,22 +638,19 @@ function GoogleForm({
         <>
           <Text variant="muted">
             {identity.email
-              ? t("Vous pouvez vous connecter avec le compte Google {email}.", {
+              ? t("profile.googleLinkedWithEmail", {
                   email: identity.email,
                 })
-              : t("Vous pouvez vous connecter avec votre compte Google.")}
+              : t("profile.googleLinked")}
           </Text>
           <Button variant="destructive" disabled={pending} onPress={unlink}>
-            {t("Retirer Google")}
+            {t("profile.removeGoogle")}
           </Button>
         </>
       ) : (
         <>
           <Text variant="muted">
-            {t(
-              "Reliez le compte Google qui a la même adresse e-mail que ce compte ({email}) pour vous connecter sans mot de passe.",
-              { email: user.email }
-            )}
+            {t("profile.linkGoogleAccountSame", { email: user.email })}
           </Text>
           <Button
             variant="secondary"
@@ -661,7 +658,9 @@ function GoogleForm({
             disabled={pending}
             onPress={link}
           >
-            {pending ? t("Connexion à Google…") : t("Relier mon compte Google")}
+            {pending
+              ? t("profile.connectingGoogle")
+              : t("profile.linkMyGoogleAccount")}
           </Button>
         </>
       )}
@@ -705,7 +704,7 @@ function PasskeysForm({ onClose }: { onClose: () => void }) {
       const label = Platform.select({
         ios: "iPhone",
         android: "Android",
-        default: t("Navigateur"),
+        default: t("profile.browser"),
       })
       const created = await api.finishPasskeyRegistration(
         blob,
@@ -732,17 +731,13 @@ function PasskeysForm({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <FormSheet title={t("Clés d'accès")} error={error} onClose={onClose}>
-      <Text variant="muted">
-        {t(
-          "Une clé d'accès permet de se connecter avec l'empreinte, le visage ou le code de l'appareil, sans mot de passe."
-        )}
-      </Text>
+    <FormSheet title={t("profile.passkeys")} error={error} onClose={onClose}>
+      <Text variant="muted">{t("profile.passkeyLetsSignDevices")}</Text>
       {passkeys === null && !error && (
-        <Text variant="muted">{t("Chargement…")}</Text>
+        <Text variant="muted">{t("common.loading")}</Text>
       )}
       {passkeys?.length === 0 && (
-        <Text variant="muted">{t("Aucune clé d'accès pour ce compte.")}</Text>
+        <Text variant="muted">{t("profile.noPasskeyAccount")}</Text>
       )}
       {passkeys && passkeys.length > 0 && (
         <View style={styles.passkeys}>
@@ -753,16 +748,16 @@ function PasskeysForm({ onClose }: { onClose: () => void }) {
             >
               <KeyRoundIcon color={colors.mutedForeground} size={20} />
               <View style={styles.rowLabel}>
-                <Text>{passkey.label || t("Clé d'accès")}</Text>
+                <Text>{passkey.label || t("profile.passkey")}</Text>
                 <Text variant="muted">
-                  {t("Ajoutée le {date}", {
+                  {t("profile.passkeyAddedOn", {
                     date: dateFormat.format(
                       new Date(passkey.created_at * 1000)
                     ),
                   })}
                   {passkey.last_used_at !== null &&
                     " · " +
-                      t("utilisée le {date}", {
+                      t("profile.passkeyUsedOn", {
                         date: dateFormat.format(
                           new Date(passkey.last_used_at * 1000)
                         ),
@@ -770,7 +765,7 @@ function PasskeysForm({ onClose }: { onClose: () => void }) {
                 </Text>
               </View>
               <IconButton
-                label={t("Supprimer la clé d'accès {label}", {
+                label={t("profile.deletePasskey", {
                   label: passkey.label ?? "",
                 })}
                 color={colors.destructive}
@@ -787,7 +782,7 @@ function PasskeysForm({ onClose }: { onClose: () => void }) {
         disabled={pending}
         onPress={add}
       >
-        {t("Ajouter une clé d'accès")}
+        {t("profile.addPasskey")}
       </Button>
     </FormSheet>
   )

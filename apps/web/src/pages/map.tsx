@@ -24,6 +24,7 @@ import { Text } from "@workspace/ui/components/text"
 import { cn } from "@workspace/ui/lib/utils"
 
 import { PanelMap } from "@/components/panel-map"
+import { useLocale, useT } from "@/lib/language"
 import {
   distanceKm,
   geocode,
@@ -37,7 +38,6 @@ import {
   type Position,
 } from "@/lib/places"
 
-const dateFormat = new Intl.DateTimeFormat("fr-FR", { dateStyle: "long" })
 const defaultRadiusKm = 25
 // The map shows every result; the list stays short to remain usable.
 const maxListed = 50
@@ -60,6 +60,8 @@ function normalize(text: string) {
 }
 
 export function Map() {
+  const t = useT()
+
   const [panels, setPanels] = React.useState<Panel[] | null>(null)
   const [loadFailed, setLoadFailed] = React.useState(false)
   // The filters and the selection live in the query string, so a URL restores
@@ -302,11 +304,11 @@ export function Map() {
       ({ coords }) => {
         setAround(
           { latitude: coords.latitude, longitude: coords.longitude },
-          "Ma position"
+          t("map.myPosition")
         )
-        setNear("Ma position")
+        setNear(t("map.myPosition"))
       },
-      () => setNearMessage("Position indisponible.")
+      () => setNearMessage(t("map.positionUnavailable"))
     )
   }
 
@@ -321,10 +323,10 @@ export function Map() {
       const place = await geocode(near)
       setAround(place, near.trim())
       if (!place) {
-        setNearMessage("Lieu introuvable.")
+        setNearMessage(t("map.placeNotFound"))
       }
     } catch {
-      setNearMessage("Recherche de lieu indisponible.")
+      setNearMessage(t("map.placeSearchUnavailable"))
     }
   }
 
@@ -342,13 +344,13 @@ export function Map() {
   return (
     <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
       <aside
-        aria-label="Recherche et filtres"
+        aria-label={t("map.filters")}
         className="flex flex-col gap-5 border-b p-6 lg:w-[400px] lg:flex-none lg:overflow-y-auto lg:border-r lg:border-b-0"
       >
-        <h1 className="sr-only">Carte des panneaux</h1>
+        <h1 className="sr-only">{t("map.title")}</h1>
 
         <Field>
-          <FieldLabel htmlFor="q">Rechercher</FieldLabel>
+          <FieldLabel htmlFor="q">{t("map.search")}</FieldLabel>
           <InputGroup>
             <InputGroupAddon>
               <SearchIcon />
@@ -356,7 +358,7 @@ export function Map() {
             <InputGroupInput
               id="q"
               type="search"
-              placeholder="Intitulé du panneau…"
+              placeholder={t("map.searchPlaceholder")}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
@@ -364,7 +366,7 @@ export function Map() {
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="tags">Tags</FieldLabel>
+          <FieldLabel htmlFor="tags">{t("map.tags")}</FieldLabel>
           <div>
             <InputGroup
               className={cn(suggestions.length > 0 && "rounded-b-none")}
@@ -378,7 +380,7 @@ export function Map() {
                 aria-expanded={suggestions.length > 0}
                 aria-controls="tag-suggestions"
                 autoComplete="off"
-                placeholder="Ajouter un tag…"
+                placeholder={t("map.addTagPlaceholder")}
                 value={tagQuery}
                 onChange={(event) => setTagQuery(event.target.value)}
                 onKeyDown={(event) => {
@@ -418,15 +420,14 @@ export function Map() {
             <>
               <div className="flex items-center justify-between">
                 <Text variant="muted">
-                  {tags.length} tag{tags.length > 1 && "s"} sélectionné
-                  {tags.length > 1 && "s"}
+                  {t("map.selectedTagCount", { count: tags.length })}
                 </Text>
                 <Button variant="link" size="xs" onClick={() => setTags([])}>
-                  Tout effacer
+                  {t("map.clearAll")}
                 </Button>
               </div>
               <ul
-                aria-label="Tags sélectionnés"
+                aria-label={t("map.selectedTags")}
                 className="flex flex-wrap gap-2"
               >
                 {tags.map((tag) => (
@@ -435,7 +436,7 @@ export function Map() {
                       {tag}
                       <button
                         type="button"
-                        aria-label={`Retirer le tag ${tag}`}
+                        aria-label={t("map.removeTag", { tag })}
                         className="grid size-7 place-items-center rounded-full outline-none hover:bg-primary-foreground/20 focus-visible:ring-3 focus-visible:ring-primary-foreground"
                         onClick={() =>
                           setTags(tags.filter((other) => other !== tag))
@@ -452,11 +453,11 @@ export function Map() {
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="near">Autour de</FieldLabel>
+          <FieldLabel htmlFor="near">{t("map.around")}</FieldLabel>
           <form className="flex gap-2" onSubmit={searchNear}>
             <Input
               id="near"
-              placeholder="Commune ou adresse"
+              placeholder={t("map.placePlaceholder")}
               enterKeyHint="search"
               value={near}
               onChange={(event) => setNear(event.target.value)}
@@ -466,7 +467,7 @@ export function Map() {
               variant="outline"
               size="icon"
               className="rounded-lg"
-              aria-label="Utiliser ma position"
+              aria-label={t("map.useMyPosition")}
               onClick={locate}
             >
               <LocateFixedIcon className="size-5" />
@@ -478,11 +479,11 @@ export function Map() {
             </Text>
           )}
           <label htmlFor="radius" className="mt-1 flex justify-between text-sm">
-            Rayon <strong>{radiusKm} km</strong>
+            {t("map.radius")} <strong>{radiusKm} km</strong>
           </label>
           <Slider
             id="radius"
-            aria-label="Rayon"
+            aria-label={t("map.radius")}
             min={1}
             max={100}
             value={[radiusKm]}
@@ -493,21 +494,22 @@ export function Map() {
 
         <div className="flex items-center justify-between gap-3 pt-1">
           <strong role="status">
-            {panels ? results.length : "…"} panneau
-            {results.length > 1 && "x"}
+            {panels
+              ? t("map.resultCount", { count: results.length })
+              : t("map.resultCountLoading")}
           </strong>
           <Button variant="secondary" size="sm" onClick={reset}>
-            Réinitialiser
+            {t("map.reset")}
           </Button>
         </div>
 
         {loadFailed && (
           <Text variant="muted" role="alert">
-            Les panneaux n'ont pas pu être chargés.
+            {t("map.loadFailed")}
           </Text>
         )}
 
-        <ul aria-label="Résultats" className="flex flex-col gap-2">
+        <ul aria-label={t("map.results")} className="flex flex-col gap-2">
           {results.slice(0, maxListed).map(({ panel, distance }) => (
             <li key={panel.id}>
               <button
@@ -552,14 +554,13 @@ export function Map() {
         </ul>
         {results.length > maxListed && (
           <Text variant="muted">
-            Les {maxListed} premiers résultats sont listés. Affinez la recherche
-            ou utilisez la carte pour voir les autres.
+            {t("map.firstListed", { count: maxListed })}
           </Text>
         )}
       </aside>
 
       <section
-        aria-label="Carte"
+        aria-label={t("map.mapLabel")}
         className="relative min-h-[80svh] flex-1 lg:min-h-0"
       >
         <PanelMap
@@ -583,16 +584,16 @@ export function Map() {
         >
           {query.trim() && (
             <FilterChip
-              label="Retirer la recherche"
+              label={t("map.removeSearch")}
               onRemove={() => setQuery("")}
             >
-              « {query.trim()} »
+              {t("map.quoted", { text: query.trim() })}
             </FilterChip>
           )}
           {tags.map((tag) => (
             <FilterChip
               key={tag}
-              label={`Retirer le tag ${tag}`}
+              label={t("map.removeTag", { tag })}
               onRemove={() => setTags(tags.filter((other) => other !== tag))}
             >
               {tag}
@@ -600,21 +601,21 @@ export function Map() {
           ))}
           {around && (
             <FilterChip
-              label="Retirer le filtre par lieu"
+              label={t("map.removePlaceFilter")}
               onRemove={() => {
                 setAround(null)
                 setNear("")
               }}
             >
-              {searchParams.get("near") || "Autour d'un point"} · {radiusKm} km
+              {searchParams.get("near") || t("map.aroundPoint")} · {radiusKm} km
             </FilterChip>
           )}
           {authorId && (
             <FilterChip
-              label="Retirer le filtre par auteur"
+              label={t("map.removeAuthorFilter")}
               onRemove={() => setAuthor(null)}
             >
-              Recensé par {authorName ?? "…"}
+              {t("map.recordedByName", { name: authorName ?? "…" })}
             </FilterChip>
           )}
         </div>
@@ -698,6 +699,12 @@ function PanelSheet({
   onFilterAuthor: (authorId: string) => void
   onClose: () => void
 }) {
+  const t = useT()
+  const locale = useLocale()
+  const dateFormat = React.useMemo(
+    () => new Intl.DateTimeFormat(locale, { dateStyle: "long" }),
+    [locale]
+  )
   const authorName = useAuthorName(panel.authorId)
   const [shared, setShared] = React.useState(false)
 
@@ -724,16 +731,16 @@ function PanelSheet({
         {panel.imageUrl ? (
           <img
             src={panel.imageUrl}
-            alt={`Photo du panneau « ${panel.title} »`}
+            alt={t("map.photoAlt", { title: panel.title })}
             className="absolute inset-0 size-full object-cover"
           />
         ) : (
-          <Text variant="muted">Pas de photo</Text>
+          <Text variant="muted">{t("map.noPhoto")}</Text>
         )}
         <Button
           variant="outline"
           size="icon"
-          aria-label="Fermer la fiche"
+          aria-label={t("map.closeSheet")}
           className="absolute top-3 right-3 border-transparent"
           onClick={onClose}
         >
@@ -745,7 +752,7 @@ function PanelSheet({
           {panel.title}
         </Text>
         {panel.tags.length > 0 && (
-          <ul aria-label="Tags" className="flex flex-wrap gap-1.5">
+          <ul aria-label={t("map.tags")} className="flex flex-wrap gap-1.5">
             {panel.tags.map((tag) => (
               <li key={tag}>
                 <Badge
@@ -757,8 +764,8 @@ function PanelSheet({
                     aria-pressed={activeTags.includes(tag)}
                     title={
                       activeTags.includes(tag)
-                        ? "Retirer ce tag de la recherche"
-                        : "Ajouter ce tag à la recherche"
+                        ? t("map.removeTagFromSearch")
+                        : t("map.addTagToSearch")
                     }
                     className="cursor-pointer"
                     onClick={() => onToggleTag(tag)}
@@ -773,20 +780,20 @@ function PanelSheet({
         <div className="flex gap-2.5 text-[15px]">
           <MapPinIcon className="mt-px size-5 flex-none text-link" />
           {Math.abs(panel.latitude).toFixed(5)}°{" "}
-          {panel.latitude >= 0 ? "N" : "S"} ·{" "}
+          {panel.latitude >= 0 ? t("map.north") : t("map.south")} ·{" "}
           {Math.abs(panel.longitude).toFixed(5)}°{" "}
-          {panel.longitude >= 0 ? "E" : "O"}
+          {panel.longitude >= 0 ? t("map.east") : t("map.west")}
         </div>
         <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2.5 border-y py-3.5 text-[15px]">
-          <dt className="text-muted-foreground">Ajouté le</dt>
+          <dt className="text-muted-foreground">{t("map.addedOn")}</dt>
           <dd>{dateFormat.format(new Date(panel.createdAt))}</dd>
           {panel.authorId && authorName && (
             <>
-              <dt className="text-muted-foreground">Recensé par</dt>
+              <dt className="text-muted-foreground">{t("map.recordedBy")}</dt>
               <dd>
                 <button
                   type="button"
-                  title="Voir les panneaux de cet auteur"
+                  title={t("map.seeAuthorSigns")}
                   className="cursor-pointer rounded-sm text-link underline outline-none focus-visible:ring-3 focus-visible:ring-ring"
                   onClick={() => onFilterAuthor(panel.authorId!)}
                 >
@@ -801,7 +808,7 @@ function PanelSheet({
         )}
         <Button variant="secondary" className="mt-auto" onClick={share}>
           <Share2Icon data-icon="inline-start" />
-          {shared ? "Lien copié" : "Partager"}
+          {shared ? t("map.linkCopied") : t("map.share")}
         </Button>
       </div>
     </article>

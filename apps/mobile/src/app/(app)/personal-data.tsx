@@ -61,56 +61,38 @@ export default function PersonalData() {
 
   return (
     <InfoScreen
-      title={t("Données personnelles")}
-      backLabel={t("Retour à mon profil")}
+      title={t("common.personalData")}
+      backLabel={t("common.backMyProfile")}
     >
-      <InfoSection title={t("Ce que l'application enregistre")}>
-        <InfoItem title={t("Votre compte")}>
-          {t(
-            "Votre adresse e-mail, votre nom affiché et la façon dont vous vous connectez (mot de passe, Google, clé d'accès). Le mot de passe n'est jamais conservé en clair."
-          )}
+      <InfoSection title={t("personalData.whatAppStores")}>
+        <InfoItem title={t("personalData.account")}>
+          {t("personalData.emailAddressDisplayName")}
         </InfoItem>
-        <InfoItem title={t("Vos panneaux")}>
-          {t(
-            "Pour chaque panneau : la photo, la position, l'intitulé, les tags, le commentaire et la date d'ajout."
-          )}
+        <InfoItem title={t("personalData.signs")}>
+          {t("personalData.eachSignPhotoPosition")}
         </InfoItem>
-        <InfoItem title={t("Vos connexions")}>
-          {t(
-            "Les appareils sur lesquels vous êtes connecté, avec la date de connexion, pour que vous puissiez les déconnecter."
-          )}
+        <InfoItem title={t("personalData.signIns")}>
+          {t("personalData.devicesSignedSignDate")}
         </InfoItem>
       </InfoSection>
 
-      <InfoSection title={t("Ce qui est visible par tous")}>
-        <InfoItem>
-          {t(
-            "Les panneaux que vous publiez sont publics : photo, position, intitulé, tags, commentaire et votre nom affiché. Votre adresse e-mail n'est jamais montrée."
-          )}
-        </InfoItem>
-        <InfoItem>
-          {t(
-            "Votre propre position n'est pas enregistrée : seule la position du panneau que vous publiez l'est."
-          )}
-        </InfoItem>
+      <InfoSection title={t("personalData.whatEveryoneSee")}>
+        <InfoItem>{t("personalData.signsPublishPublicPhoto")}</InfoItem>
+        <InfoItem>{t("personalData.ownPositionNotStored")}</InfoItem>
       </InfoSection>
 
-      <InfoSection title={t("Services extérieurs")}>
+      <InfoSection title={t("personalData.outsideServices")}>
         <InfoItem title="OpenStreetMap">
-          {t(
-            "Le fond de carte est chargé depuis OpenStreetMap. La recherche d'un lieu et le tag de commune lui envoient le texte cherché ou la position du panneau."
-          )}
+          {t("personalData.mapBackgroundLoadedOpenstreetmap")}
         </InfoItem>
         <InfoItem title="Google">
-          {t(
-            "Seulement si vous choisissez « Continuer avec Google » : Google confirme alors votre identité et votre adresse e-mail."
-          )}
+          {t("personalData.onlyChooseContinueGoogle")}
         </InfoItem>
       </InfoSection>
 
-      <InfoSection title={t("Appareils connectés")}>
+      <InfoSection title={t("personalData.signedDevices")}>
         {devices === null && !error && (
-          <Text variant="muted">{t("Chargement…")}</Text>
+          <Text variant="muted">{t("common.loading")}</Text>
         )}
         {devices?.map((device) => (
           <View key={device.id} style={styles.device}>
@@ -118,11 +100,11 @@ export default function PersonalData() {
             <View style={styles.deviceText}>
               <Text>
                 {device.current
-                  ? t("Cet appareil")
-                  : device.device_label || t("Autre appareil")}
+                  ? t("personalData.thisDevice")
+                  : device.device_label || t("personalData.anotherDevice")}
               </Text>
               <Text variant="muted">
-                {t("Connecté le {date}", {
+                {t("personalData.signedInOn", {
                   date: dateFormat.format(new Date(device.signed_in_at * 1000)),
                 })}
               </Text>
@@ -133,7 +115,7 @@ export default function PersonalData() {
                 variant="ghost"
                 onPress={() => signOutDevice(device)}
               >
-                {t("Déconnecter")}
+                {t("personalData.signOut")}
               </Button>
             )}
           </View>
@@ -148,20 +130,16 @@ export default function PersonalData() {
           icon={(props) => <LogOutIcon {...props} />}
           onPress={signOutAll}
         >
-          {t("Se déconnecter partout")}
+          {t("personalData.signOutEverywhere")}
         </Button>
       </InfoSection>
 
-      <InfoSection title={t("Supprimer vos données")}>
-        <InfoItem title={t("Un panneau")}>
-          {t(
-            "Dans « Mes panneaux », touchez le crayon puis « Supprimer le panneau ». Il est retiré de la carte."
-          )}
+      <InfoSection title={t("personalData.deletingData")}>
+        <InfoItem title={t("personalData.oneSign")}>
+          {t("personalData.mySignsTapPencil")}
         </InfoItem>
-        <InfoItem title={t("Votre compte")}>
-          {t(
-            "La suppression du compte n'est pas encore possible depuis l'application. Écrivez-nous depuis « Aide et contact » pour la demander."
-          )}
+        <InfoItem title={t("personalData.account")}>
+          {t("personalData.deletingAccountNotPossible")}
         </InfoItem>
       </InfoSection>
     </InfoScreen>

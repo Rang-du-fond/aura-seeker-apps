@@ -44,14 +44,15 @@ export default function AdjustPosition() {
   return (
     <View style={styles.screen}>
       <StatusBar />
-      <ScreenHeader title={t("Ajuster la position")} backLabel={t("Annuler")} />
+      <ScreenHeader
+        title={t("adjustPosition.adjustPosition")}
+        backLabel={t("common.cancel")}
+      />
 
       <View style={styles.map}>
         <PositionMap position={start} onMove={onMove} />
         <View pointerEvents="none" style={[styles.hint, shadow.card]}>
-          <Text variant="label">
-            {t("Déplacez la carte pour placer le repère sur le panneau.")}
-          </Text>
+          <Text variant="label">{t("adjustPosition.moveMapPutMarker")}</Text>
           <Text variant="muted">{formatCoordinates(moved ?? start)}</Text>
         </View>
       </View>
@@ -70,7 +71,7 @@ export default function AdjustPosition() {
             router.back()
           }}
         >
-          {t("Valider la position")}
+          {t("adjustPosition.confirmPosition")}
         </Button>
       </View>
     </View>

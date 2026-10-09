@@ -1,23 +1,22 @@
 import * as React from "react"
 import { useColorScheme } from "react-native"
 
+import { createTranslator } from "@workspace/ui/lib/i18n"
 import { ThemeProvider } from "@workspace/ui/native/theme"
 
-import { en } from "@/lib/i18n/en"
+import { languages, matchLanguage, reference, type Language } from "@/lib/i18n"
 import { readItem, writeItem } from "@/lib/storage"
 
 const storageKey = "preferences"
 
-export type Language = "fr" | "en"
+export type { Language }
 export type ThemeChoice = "system" | "light" | "dark"
 
 type Preferences = { language: Language; theme: ThemeChoice }
 
-// French unless the device is set to English.
+// The device's language when the app has it, French otherwise.
 function deviceLanguage(): Language {
-  const locale = Intl.DateTimeFormat().resolvedOptions().locale
-
-  return locale.toLowerCase().startsWith("en") ? "en" : "fr"
+  return matchLanguage([Intl.DateTimeFormat().resolvedOptions().locale])
 }
 
 const Context = React.createContext<
@@ -102,43 +101,20 @@ export function usePreferences() {
   return context
 }
 
-// Translation: the French text is the key. `t("Modifier {title}", { title })`
-// returns it as it is in French, and its entry in i18n/en.ts in English. A
-// text missing from en.ts falls back to French.
+// Translation: `t("signs.hello", { name })` returns the text of that key in
+// the user's language (see lib/i18n and the catalogs next to it). A counted
+// text takes `count`: `t("common.signCount", { count })`.
 export function useT() {
   const { language } = usePreferences()
 
-  return React.useCallback(
-    (text: string, values?: Record<string, string | number>) => {
-      const template =
-        language === "en"
-          ? ((en as Record<string, string>)[text] ?? text)
-          : text
+  return React.useMemo(() => {
+    const { messages, locale } = languages[language]
 
-      return values
-        ? template.replace(/\{(\w+)\}/g, (_, name) =>
-            String(values[name] ?? "")
-          )
-        : template
-    },
-    [language]
-  )
-}
-
-// A counted text: `count(n, "{count} panneau", "{count} panneaux")`. French
-// uses the plural from 2, English for everything but 1.
-export function useCount() {
-  const { language } = usePreferences()
-  const t = useT()
-
-  return React.useCallback(
-    (count: number, one: string, many: string) =>
-      t((language === "en" ? count !== 1 : count > 1) ? many : one, { count }),
-    [language, t]
-  )
+    return createTranslator(messages, reference, locale)
+  }, [language])
 }
 
 // BCP 47 tag for dates and numbers.
 export function useLocale() {
-  return usePreferences().language === "en" ? "en-GB" : "fr-FR"
+  return languages[usePreferences().language].locale
 }

@@ -23,7 +23,7 @@ import { Logo } from "@/components/logo"
 import type { Place } from "@/lib/api"
 import { api } from "@/lib/client"
 import { useUser } from "@/lib/session"
-import { useCount, useLocale, useT } from "@/lib/preferences"
+import { useLocale, useT } from "@/lib/preferences"
 
 export default function Signs() {
   const t = useT()
@@ -34,7 +34,6 @@ export default function Signs() {
   const [signs, setSigns] = React.useState<Place[] | null>(null)
   const [loadFailed, setLoadFailed] = React.useState(false)
   const locale = useLocale()
-  const count = useCount()
   const dateFormat = React.useMemo(
     () => new Intl.DateTimeFormat(locale, { dateStyle: "medium" }),
     [locale]
@@ -71,7 +70,7 @@ export default function Signs() {
           <Logo inverted />
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={t("Mon profil et paramètres")}
+            accessibilityLabel={t("signs.myProfileSettings")}
             style={styles.avatar}
             onPress={() => router.push("/profile")}
           >
@@ -79,7 +78,7 @@ export default function Signs() {
           </Pressable>
         </View>
         <Text variant="h1" accessibilityRole="header" style={styles.greeting}>
-          {t("Bonjour {name}", { name: user.firstName })}
+          {t("signs.hello", { name: user.firstName })}
         </Text>
         <Button
           size="lg"
@@ -87,7 +86,7 @@ export default function Signs() {
           icon={(props) => <CameraIcon {...props} />}
           onPress={() => router.push("/capture")}
         >
-          {t("Ajouter un panneau")}
+          {t("common.addSign")}
         </Button>
       </View>
 
@@ -98,11 +97,11 @@ export default function Signs() {
         ListHeaderComponent={
           <View style={styles.titleRow}>
             <Text variant="h2" accessibilityRole="header">
-              {t("Mes contributions")}
+              {t("signs.myContributions")}
             </Text>
             {signs && (
               <Text variant="muted" style={styles.count}>
-                {count(signs.length, "{count} panneau", "{count} panneaux")}
+                {t("common.signCount", { count: signs.length })}
               </Text>
             )}
           </View>
@@ -110,16 +109,16 @@ export default function Signs() {
         ListEmptyComponent={
           <Text variant="muted" style={styles.empty}>
             {loadFailed
-              ? t("Vos panneaux n'ont pas pu être chargés.")
+              ? t("signs.signsCouldNotLoaded")
               : signs
-                ? t("Vous n'avez pas encore recensé de panneau.")
-                : t("Chargement…")}
+                ? t("signs.haventRecordedSignYet")
+                : t("common.loading")}
           </Text>
         }
         renderItem={({ item: sign }) => (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={t("{title}, voir sur la carte", {
+            accessibilityLabel={t("signs.seeOnMap", {
               title: sign.title,
             })}
             style={({ pressed }) => [styles.item, pressed && styles.pressed]}
@@ -145,7 +144,7 @@ export default function Signs() {
               </Text>
             </View>
             <IconButton
-              label={t("Modifier {title}", { title: sign.title })}
+              label={t("signs.edit", { title: sign.title })}
               color={colors.mutedForeground}
               icon={(props) => <PencilIcon {...props} />}
               onPress={() =>

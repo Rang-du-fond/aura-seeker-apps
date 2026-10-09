@@ -30,7 +30,7 @@ import type { MapPoint } from "@/components/sign-map"
 import type { TagUsage } from "@/lib/api"
 import { api } from "@/lib/client"
 import { geocode } from "@/lib/geocode"
-import { useCount, useT } from "@/lib/preferences"
+import { useT } from "@/lib/preferences"
 
 export const defaultRadiusKm = 25
 
@@ -70,7 +70,6 @@ export function MapSearch({
   top: number
 }) {
   const t = useT()
-  const count = useCount()
   const colors = useColors()
   const styles = useStyles()
   const inputRef = React.useRef<TextInput>(null)
@@ -129,10 +128,10 @@ export function MapSearch({
       if (point) {
         setAround(point, place.trim())
       } else {
-        setPlaceMessage(t("Lieu introuvable."))
+        setPlaceMessage(t("mapSearch.placeNotFound"))
       }
     } catch {
-      setPlaceMessage(t("Recherche de lieu indisponible."))
+      setPlaceMessage(t("mapSearch.placeSearchUnavailable"))
     }
   }
 
@@ -140,10 +139,10 @@ export function MapSearch({
     setPlaceMessage(null)
     const point = await onUseMyPosition()
     if (point) {
-      setPlace(t("Ma position"))
-      setAround(point, t("Ma position"))
+      setPlace(t("mapSearch.myPosition"))
+      setAround(point, t("mapSearch.myPosition"))
     } else {
-      setPlaceMessage(t("Position indisponible."))
+      setPlaceMessage(t("mapSearch.positionUnavailable"))
     }
   }
 
@@ -158,8 +157,8 @@ export function MapSearch({
           <LogoMark size={36} />
           <TextInput
             ref={inputRef}
-            accessibilityLabel={t("Rechercher")}
-            placeholder={t("Rechercher un panneau…")}
+            accessibilityLabel={t("mapSearch.search")}
+            placeholder={t("mapSearch.searchSign")}
             placeholderTextColor={colors.mutedForeground}
             returnKeyType="search"
             autoCorrect={false}
@@ -171,7 +170,7 @@ export function MapSearch({
           />
           {open ? (
             <IconButton
-              label={t("Fermer")}
+              label={t("common.close")}
               size={40}
               backgroundColor={colors.muted}
               icon={(props) => <XIcon {...props} />}
@@ -179,7 +178,7 @@ export function MapSearch({
             />
           ) : (
             <IconButton
-              label={t("Filtres")}
+              label={t("mapSearch.filters")}
               size={40}
               backgroundColor={active ? colors.primary : colors.muted}
               color={active ? colors.primaryForeground : undefined}
@@ -197,13 +196,13 @@ export function MapSearch({
           >
             {suggestions.length > 0 && (
               <View style={styles.section}>
-                <Text variant="label">{t("Tags associés")}</Text>
+                <Text variant="label">{t("mapSearch.relatedTags")}</Text>
                 <View style={styles.suggestions}>
                   {suggestions.map(({ name, places }) => (
                     <Pressable
                       key={name}
                       accessibilityRole="button"
-                      accessibilityLabel={t("Ajouter le tag {tag}", {
+                      accessibilityLabel={t("common.addTag", {
                         tag: name,
                       })}
                       style={({ pressed }) => [
@@ -222,7 +221,7 @@ export function MapSearch({
                       <PlusIcon color={colors.link} size={18} />
                       <Text style={styles.suggestionLabel}>{name}</Text>
                       <Text variant="muted">
-                        {count(places, "{count} panneau", "{count} panneaux")}
+                        {t("common.signCount", { count: places })}
                       </Text>
                     </Pressable>
                   ))}
@@ -232,12 +231,12 @@ export function MapSearch({
 
             {tags.length > 0 && (
               <View style={styles.section}>
-                <Text variant="label">{t("Tags")}</Text>
+                <Text variant="label">{t("common.tags")}</Text>
                 <View style={styles.chips}>
                   {tags.map((tag) => (
                     <Chip
                       key={tag}
-                      removeLabel={t("Retirer le tag {tag}", { tag })}
+                      removeLabel={t("common.removeTag", { tag })}
                       removeIcon={() => remove}
                       onRemove={() =>
                         onChange({
@@ -253,11 +252,14 @@ export function MapSearch({
               </View>
             )}
 
-            <Field label={t("Autour de")} hint={placeMessage ?? undefined}>
+            <Field
+              label={t("mapSearch.around")}
+              hint={placeMessage ?? undefined}
+            >
               <View style={styles.placeRow}>
                 <View style={styles.placeInput}>
                   <Input
-                    placeholder={t("Commune ou adresse")}
+                    placeholder={t("mapSearch.townAddress")}
                     returnKeyType="search"
                     autoCorrect={false}
                     value={place}
@@ -267,7 +269,7 @@ export function MapSearch({
                   />
                 </View>
                 <IconButton
-                  label={t("Utiliser ma position")}
+                  label={t("mapSearch.useMyPosition")}
                   size={52}
                   backgroundColor={colors.muted}
                   icon={(props) => <LocateFixedIcon {...props} size={22} />}
@@ -278,11 +280,11 @@ export function MapSearch({
 
             <View style={[styles.section, !around && styles.disabled]}>
               <View style={styles.radiusLabel}>
-                <Text variant="label">{t("Rayon")}</Text>
+                <Text variant="label">{t("mapSearch.radius")}</Text>
                 <Text variant="label">{radiusKm} km</Text>
               </View>
               <Slider
-                accessibilityLabel={t("Rayon")}
+                accessibilityLabel={t("mapSearch.radius")}
                 minimumValue={1}
                 maximumValue={100}
                 step={1}
@@ -302,10 +304,10 @@ export function MapSearch({
               onCheckedChange={(checked) =>
                 onChange({ ...filters, liked: checked })
               }
-              label={t("Seulement les panneaux que j'aime")}
+              label={t("mapSearch.onlySignsILike")}
               checkIcon={(props) => <CheckIcon {...props} strokeWidth={3} />}
             >
-              <Text>{t("Seulement les panneaux que j'aime")}</Text>
+              <Text>{t("mapSearch.onlySignsILike")}</Text>
             </Checkbox>
 
             {(active || search !== "") && (
@@ -319,7 +321,7 @@ export function MapSearch({
                   onChange(noFilters)
                 }}
               >
-                {t("Réinitialiser")}
+                {t("mapSearch.reset")}
               </Button>
             )}
           </ScrollView>
@@ -331,7 +333,7 @@ export function MapSearch({
           {tags.map((tag) => (
             <Chip
               key={tag}
-              removeLabel={t("Retirer le tag {tag}", { tag })}
+              removeLabel={t("common.removeTag", { tag })}
               removeIcon={() => remove}
               onRemove={() =>
                 onChange({
@@ -345,7 +347,7 @@ export function MapSearch({
           ))}
           {around && (
             <Chip
-              removeLabel={t("Retirer le filtre par lieu")}
+              removeLabel={t("mapSearch.removePlaceFilter")}
               removeIcon={() => remove}
               onRemove={() => {
                 setPlace("")
@@ -357,11 +359,11 @@ export function MapSearch({
           )}
           {liked && (
             <Chip
-              removeLabel={t("Retirer le filtre par j'aime")}
+              removeLabel={t("mapSearch.removeLikesFilter")}
               removeIcon={() => remove}
               onRemove={() => onChange({ ...filters, liked: false })}
             >
-              {t("Mes j'aime")}
+              {t("mapSearch.myLikes")}
             </Chip>
           )}
         </View>

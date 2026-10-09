@@ -42,16 +42,16 @@ export default function Permissions() {
     {
       key: "camera",
       Icon: CameraIcon,
-      title: t("Appareil photo"),
-      reason: t("Pour photographier le panneau"),
+      title: t("permissions.camera"),
+      reason: t("permissions.photographSign"),
       status: camera,
       request: requestCamera,
     },
     {
       key: "location",
       Icon: MapPinIcon,
-      title: t("Localisation"),
-      reason: t("Pour placer le panneau sur la carte"),
+      title: t("permissions.location"),
+      reason: t("permissions.placeSignMap"),
       status: location,
       request: requestLocation,
     },
@@ -112,9 +112,9 @@ export default function Permissions() {
       </View>
 
       <Text variant="h1" accessibilityRole="header" style={styles.light}>
-        <Text variant="h1">{t("Deux autorisations")}</Text>
+        <Text variant="h1">{t("permissions.twoPermissions")}</Text>
         {"\n"}
-        {t("pour commencer")}
+        {t("permissions.getStarted")}
       </Text>
 
       <View style={styles.list}>
@@ -133,7 +133,7 @@ export default function Permissions() {
                 icon={(props) => <CheckIcon {...props} strokeWidth={3} />}
                 style={styles.granted}
               >
-                {t("Autorisé")}
+                {t("permissions.allowed")}
               </Badge>
             ) : blocked.includes(key) ? (
               // Refused for good: the system no longer shows its prompt, only
@@ -143,7 +143,7 @@ export default function Permissions() {
                 variant="secondary"
                 onPress={() => Linking.openSettings()}
               >
-                {t("Réglages")}
+                {t("permissions.settings")}
               </Button>
             ) : (
               <Button
@@ -151,7 +151,7 @@ export default function Permissions() {
                 variant="accent"
                 onPress={() => ask(key, request)}
               >
-                {t("Autoriser")}
+                {t("common.allow")}
               </Button>
             )}
           </View>
@@ -163,10 +163,10 @@ export default function Permissions() {
           size="lg"
           onPress={async () => router.replace(await afterPermissions())}
         >
-          {t("Continuer")}
+          {t("permissions.continue")}
         </Button>
         <Text variant="muted" style={styles.note}>
-          {t("Vous pourrez changer ces choix dans les réglages du téléphone.")}
+          {t("permissions.changeTheseChoicesPhones")}
         </Text>
       </View>
     </View>

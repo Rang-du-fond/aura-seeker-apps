@@ -79,9 +79,7 @@ export default function EditSign() {
           setComment(loaded.description ?? "")
         }
       })
-      .catch(
-        () => !cancelled && setError(t("Le panneau n'a pas pu être chargé."))
-      )
+      .catch(() => !cancelled && setError(t("editSign.signCouldNotLoaded")))
 
     return () => {
       cancelled = true
@@ -93,7 +91,7 @@ export default function EditSign() {
       return
     }
     if (!title.trim()) {
-      setError(t("Donnez un intitulé au panneau."))
+      setError(t("common.giveSignTitle"))
       return
     }
     setError(null)
@@ -112,14 +110,12 @@ export default function EditSign() {
     } catch (caught) {
       setError(
         caught instanceof ApiError && caught.code === "network"
-          ? t("Impossible de joindre le serveur. Rien n'a été enregistré.")
+          ? t("editSign.serverCantReachedNothing")
           : caught instanceof ApiError && caught.status === 401
-            ? t("Votre session a expiré. Reconnectez-vous pour enregistrer.")
+            ? t("editSign.sessionExpiredSignAgain")
             : caught instanceof ApiError && caught.status === 403
-              ? t("Seul l'auteur du panneau peut le modifier.")
-              : t(
-                  "Les modifications n'ont pas pu être enregistrées. Réessayez."
-                )
+              ? t("editSign.onlySignsAuthorEdit")
+              : t("editSign.changesCouldNotSaved")
       )
       setPending(false)
     }
@@ -130,10 +126,10 @@ export default function EditSign() {
       return
     }
     const confirmed = await confirm(
-      t("Supprimer ce panneau ?"),
-      t("Il sera retiré de la carte et de vos contributions."),
-      t("Supprimer"),
-      t("Annuler")
+      t("editSign.deleteConfirmTitle"),
+      t("editSign.removedMapContributions"),
+      t("editSign.delete"),
+      t("common.cancel")
     )
     if (!confirmed) {
       return
@@ -146,8 +142,8 @@ export default function EditSign() {
     } catch (caught) {
       setError(
         caught instanceof ApiError && caught.status === 401
-          ? t("Votre session a expiré. Reconnectez-vous pour supprimer.")
-          : t("Le panneau n'a pas pu être supprimé. Réessayez.")
+          ? t("editSign.sessionExpiredSignAgainDelete")
+          : t("editSign.signCouldNotDeleted")
       )
       setPending(false)
     }
@@ -156,7 +152,10 @@ export default function EditSign() {
   return (
     <View style={styles.screen}>
       <StatusBar />
-      <ScreenHeader title={t("Modifier le panneau")} backLabel={t("Annuler")} />
+      <ScreenHeader
+        title={t("editSign.editSign")}
+        backLabel={t("common.cancel")}
+      />
 
       {/* The form and its button move up with the keyboard. */}
       <KeyboardAvoidingView behavior="padding" style={styles.form}>
@@ -168,16 +167,19 @@ export default function EditSign() {
             <>
               <Image
                 source={{ uri: api.imageUrl(place.image) }}
-                accessibilityLabel={t("Photo du panneau")}
+                accessibilityLabel={t("common.photoSign")}
                 style={styles.photo}
               />
-              <Field label={t("Intitulé du panneau")}>
+              <Field label={t("common.titleSign")}>
                 <Input value={title} onChangeText={setTitle} />
               </Field>
               <TagField tags={tags} onChange={setTags} />
-              <Field label={t("Commentaire")} optional={t("(facultatif)")}>
+              <Field
+                label={t("common.comment")}
+                optional={t("common.optional")}
+              >
                 <Input
-                  placeholder={t("Remarques sur le panneau…")}
+                  placeholder={t("common.notesAboutSign")}
                   multiline
                   value={comment}
                   onChangeText={setComment}
@@ -189,11 +191,11 @@ export default function EditSign() {
                 disabled={pending}
                 onPress={remove}
               >
-                {t("Supprimer le panneau")}
+                {t("editSign.deleteSign")}
               </Button>
             </>
           ) : (
-            !error && <Text variant="muted">{t("Chargement…")}</Text>
+            !error && <Text variant="muted">{t("common.loading")}</Text>
           )}
         </ScrollView>
 
@@ -219,7 +221,7 @@ export default function EditSign() {
             disabled={!place || pending}
             onPress={save}
           >
-            {pending ? t("Enregistrement…") : t("Enregistrer")}
+            {pending ? t("common.saving") : t("common.save")}
           </Button>
         </View>
       </KeyboardAvoidingView>

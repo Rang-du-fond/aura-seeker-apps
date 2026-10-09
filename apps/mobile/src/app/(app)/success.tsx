@@ -78,20 +78,20 @@ function Success() {
       </View>
 
       <Text accessibilityRole="header" style={styles.title}>
-        {t("Bravo !")}
+        {t("success.wellDone")}
         {"\n"}
-        <Text style={styles.subtitle}>{t("Panneau publié sur la carte")}</Text>
+        <Text style={styles.subtitle}>{t("success.signPublishedMap")}</Text>
       </Text>
 
-      <View accessibilityLabel={t("Votre contribution")} style={styles.card}>
+      <View accessibilityLabel={t("success.contribution")} style={styles.card}>
         {image ? (
           <Image source={{ uri: api.imageUrl(image) }} style={styles.photo} />
         ) : (
           <View style={styles.photo} />
         )}
         <View style={styles.cardText}>
-          <Text style={styles.cardTitle}>{title || t("Nouveau panneau")}</Text>
-          <Text variant="muted">{t("à l'instant")}</Text>
+          <Text style={styles.cardTitle}>{title || t("common.newSign")}</Text>
+          <Text variant="muted">{t("success.justNow")}</Text>
         </View>
       </View>
 
@@ -102,7 +102,7 @@ function Success() {
           icon={(props) => <CameraIcon {...props} />}
           onPress={() => router.replace("/capture")}
         >
-          {t("Recenser un autre panneau")}
+          {t("success.recordAnotherSign")}
         </Button>
         <Button
           size="lg"
@@ -115,7 +115,7 @@ function Success() {
             })
           }
         >
-          {t("Voir sur la carte")}
+          {t("success.seeOnMap")}
         </Button>
       </View>
     </View>

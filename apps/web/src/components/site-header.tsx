@@ -5,25 +5,30 @@ import { Button } from "@workspace/ui/components/button"
 import { ModeToggle } from "@workspace/ui/components/mode-toggle"
 import { cn } from "@workspace/ui/lib/utils"
 
+import { LanguageToggle } from "@/components/language-toggle"
 import { Logo } from "@/components/logo"
+import type { MessageKey } from "@/lib/i18n"
+import { useT } from "@/lib/language"
 
-const navigation = [
-  { to: "/", label: "Accueil" },
-  { to: "/map", label: "Carte des panneaux" },
+const navigation: { to: string; label: MessageKey }[] = [
+  { to: "/", label: "header.home" },
+  { to: "/map", label: "header.map" },
 ]
 
 export function SiteHeader() {
+  const t = useT()
+
   return (
     <header className="flex flex-wrap items-center justify-between gap-4 border-b bg-background px-[clamp(1rem,4vw,3rem)] py-3.5">
       <Link
         to="/"
-        aria-label="Accueil — La Région Auvergne-Rhône-Alpes"
+        aria-label={t("header.homeLabel")}
         className="rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring"
       >
         <Logo />
       </Link>
       <nav
-        aria-label="Navigation principale"
+        aria-label={t("header.navigation")}
         className="flex flex-wrap items-center gap-1"
       >
         {navigation.map(({ to, label }) => (
@@ -38,19 +43,25 @@ export function SiteHeader() {
               )
             }
           >
-            {label}
+            {t(label)}
           </NavLink>
         ))}
         <Button asChild className="ml-2">
           <a href="/#app">
             <SmartphoneIcon data-icon="inline-start" />
-            Télécharger l'app
+            {t("header.download")}
           </a>
         </Button>
-        <ModeToggle label="Changer de thème" labels={themeLabels} />
+        <LanguageToggle />
+        <ModeToggle
+          label={t("header.changeTheme")}
+          labels={{
+            light: t("header.themeLight"),
+            dark: t("header.themeDark"),
+            system: t("header.themeSystem"),
+          }}
+        />
       </nav>
     </header>
   )
 }
-
-const themeLabels = { light: "Clair", dark: "Sombre", system: "Système" }

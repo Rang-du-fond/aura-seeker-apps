@@ -22,8 +22,8 @@ export function PasswordInput(props: TextInputProps) {
         <IconButton
           label={
             visible
-              ? t("Masquer le mot de passe")
-              : t("Afficher le mot de passe")
+              ? t("passwordInput.hidePassword")
+              : t("passwordInput.showPassword")
           }
           color={colors.mutedForeground}
           icon={(iconProps) => <Icon {...iconProps} />}

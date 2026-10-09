@@ -48,19 +48,19 @@ export default function Signup() {
 
   async function submit() {
     if (!displayName.trim() || !email.trim()) {
-      setError(t("Renseignez votre nom affiché et votre adresse e-mail."))
+      setError(t("signup.enterDisplayNameEmail"))
       return
     }
     if (password.length < minPasswordLength) {
       setError(
-        t("Le mot de passe doit contenir au moins {count} caractères.", {
+        t("common.passwordMustLeastCharacters", {
           count: minPasswordLength,
         })
       )
       return
     }
     if (!accepted) {
-      setError(t("Acceptez les conditions d'utilisation pour continuer."))
+      setError(t("signup.acceptTermsUseContinue"))
       return
     }
     setError(null)
@@ -83,19 +83,17 @@ export default function Signup() {
   }
 
   return (
-    <AuthShell step={t("Étape 1 / 3")}>
+    <AuthShell step={t("signup.step")}>
       <View style={styles.intro}>
         <Text variant="h1" accessibilityRole="header">
-          {t("Créer un compte")}
+          {t("common.createAccount")}
         </Text>
-        <Text style={styles.muted}>
-          {t("Votre compte permet de retrouver vos panneaux.")}
-        </Text>
+        <Text style={styles.muted}>{t("signup.accountKeepsTrackSigns")}</Text>
       </View>
 
       <Field
-        label={t("Nom affiché")}
-        hint={t("Visible sur les panneaux que vous recensez.")}
+        label={t("signup.displayName")}
+        hint={t("signup.shownSignsRecord")}
       >
         <Input
           autoComplete="nickname"
@@ -104,7 +102,7 @@ export default function Signup() {
         />
       </Field>
 
-      <Field label={t("Adresse e-mail")}>
+      <Field label={t("common.emailAddress")}>
         <Input
           placeholder="prenom.nom@exemple.fr"
           keyboardType="email-address"
@@ -117,8 +115,8 @@ export default function Signup() {
       </Field>
 
       <Field
-        label={t("Mot de passe")}
-        hint={t("{count} caractères au minimum.", { count: minPasswordLength })}
+        label={t("common.password")}
+        hint={t("common.charactersLeast", { count: minPasswordLength })}
       >
         <PasswordInput
           autoComplete="new-password"
@@ -130,19 +128,17 @@ export default function Signup() {
       <Checkbox
         checked={accepted}
         onCheckedChange={setAccepted}
-        label={t(
-          "J'accepte les conditions d'utilisation et la politique de confidentialité"
-        )}
+        label={t("signup.iAcceptTermsUse")}
         checkIcon={(props) => <CheckIcon {...props} strokeWidth={3} />}
       >
         <Text style={styles.terms}>
-          {t("J'accepte les")}{" "}
+          {t("signup.iAccept")}{" "}
           <Text style={[styles.terms, styles.link]}>
-            {t("conditions d'utilisation")}
+            {t("signup.termsUse")}
           </Text>{" "}
-          {t("et la")}{" "}
+          {t("signup.andThe")}{" "}
           <Text style={[styles.terms, styles.link]}>
-            {t("politique de confidentialité")}
+            {t("signup.privacyPolicy")}
           </Text>
           .
         </Text>
@@ -155,7 +151,7 @@ export default function Signup() {
       )}
 
       <Button size="lg" disabled={pending} onPress={submit}>
-        {pending ? t("Création du compte…") : t("Créer mon compte")}
+        {pending ? t("signup.creatingAccount") : t("signup.createMyAccount")}
       </Button>
 
       <OtherSignIn
@@ -165,13 +161,13 @@ export default function Signup() {
       />
 
       <Text style={[styles.muted, styles.footer]}>
-        {t("Déjà un compte ?")}{" "}
+        {t("signup.alreadyAccount")}{" "}
         <Text
           accessibilityRole="link"
           style={styles.footerLink}
           onPress={() => router.replace("/login")}
         >
-          {t("Se connecter")}
+          {t("common.signIn")}
         </Text>
       </Text>
     </AuthShell>

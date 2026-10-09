@@ -19,6 +19,7 @@ import { radius, space } from "@workspace/ui/native/tokens"
 
 import { ScreenHeader } from "@/components/screen-header"
 import { StatusBar } from "@/components/status-bar"
+import type { MessageKey } from "@/lib/i18n"
 import { useT } from "@/lib/preferences"
 import { acceptRules } from "@/lib/rules"
 
@@ -83,36 +84,36 @@ function PlateIcon(props: IconProps) {
   )
 }
 
-// What a photo must not show. Texts are French: translated where shown.
+// What a photo must not show, as translation keys.
 const forbidden: {
   Icon: (props: IconProps) => React.ReactNode
-  title: string
-  detail: string
+  title: MessageKey
+  detail: MessageKey
 }[] = [
   {
     Icon: MovingIcon,
-    title: "Pas d'objet en mouvement",
-    detail: "Passants, cyclistes, animaux… attendez que la vue soit dégagée.",
+    title: "rules.nothingMoving",
+    detail: "rules.passersCyclistsAnimalsWait",
   },
   {
     Icon: (props) => <CarIcon {...props} />,
-    title: "Pas de véhicule",
-    detail: "Voitures, bus, trains.",
+    title: "rules.noVehicles",
+    detail: "rules.carsBusesTrains",
   },
   {
     Icon: PlateIcon,
-    title: "Pas de plaque d'immatriculation",
-    detail: "Même lisible en partie ou en arrière-plan.",
+    title: "rules.noNumberPlates",
+    detail: "rules.evenPartlyReadableBackground",
   },
   {
     Icon: (props) => <FileTextIcon {...props} />,
-    title: "Pas de document de la Région",
-    detail: "Courriers, dossiers, écrans, affichages internes.",
+    title: "rules.noDocumentsRegion",
+    detail: "rules.lettersFilesScreensInternal",
   },
   {
     Icon: (props) => <EyeOffIcon {...props} />,
-    title: "Aucune donnée personnelle ou sensible",
-    detail: "Visages, noms, adresses, numéros.",
+    title: "rules.noPersonalSensitiveData",
+    detail: "rules.facesNamesAddressesNumbers",
   },
 ]
 
@@ -136,8 +137,8 @@ export default function Rules() {
       <StatusBar />
       {review && (
         <ScreenHeader
-          title={t("Règles de prise de vue")}
-          backLabel={t("Retour à mon profil")}
+          title={t("common.photoRules")}
+          backLabel={t("common.backMyProfile")}
         />
       )}
       <ScrollView
@@ -148,9 +149,9 @@ export default function Rules() {
       >
         {!review && (
           <Text variant="h1" accessibilityRole="header" style={styles.light}>
-            <Text variant="h1">{t("Avant de commencer")}</Text>
+            <Text variant="h1">{t("rules.beforeStart")}</Text>
             {"\n"}
-            {t("quelques règles")}
+            {t("rules.fewRules")}
           </Text>
         )}
 
@@ -159,8 +160,8 @@ export default function Rules() {
             <FramedIcon color={colors.white} size={24} />
           </View>
           <Text style={styles.mainText}>
-            <Text style={styles.strong}>{t("Seulement le panneau")}</Text>
-            {t(", bien cadré dans le carré.")}
+            <Text style={styles.strong}>{t("rules.onlySign")}</Text>
+            {t("rules.wellFramedSquare")}
           </Text>
         </View>
 
@@ -190,18 +191,16 @@ export default function Rules() {
           <Checkbox
             checked={accepted}
             onCheckedChange={setAccepted}
-            label={t("J'ai lu et je respecterai ces règles.")}
+            label={t("rules.iReadTheseRules")}
             checkIcon={(props) => <CheckIcon {...props} strokeWidth={3} />}
           >
-            <Text style={styles.accept}>
-              {t("J'ai lu et je respecterai ces règles.")}
-            </Text>
+            <Text style={styles.accept}>{t("rules.iReadTheseRules")}</Text>
           </Checkbox>
           <Button size="lg" disabled={!accepted} onPress={start}>
-            {t("Commencer")}
+            {t("rules.getStarted")}
           </Button>
           <Text variant="muted" style={styles.note}>
-            {t("Ces règles restent accessibles depuis votre profil.")}
+            {t("rules.theseRulesRemainAvailable")}
           </Text>
         </View>
       )}

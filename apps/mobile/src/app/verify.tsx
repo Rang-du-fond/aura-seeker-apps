@@ -51,7 +51,7 @@ export default function Verify() {
       return
     }
     if (entered.length !== codeLength) {
-      setError(t("Saisissez le code à 6 chiffres."))
+      setError(t("common.enterCode"))
       return
     }
     setError(null)
@@ -81,24 +81,24 @@ export default function Verify() {
   }
 
   return (
-    <AuthShell step={params.name ? t("Étape 2 / 3") : undefined}>
+    <AuthShell step={params.name ? t("verify.step") : undefined}>
       <View style={styles.icon}>
         <MailIcon color={colors.link} size={34} />
       </View>
 
       <View style={styles.intro}>
         <Text variant="h1" accessibilityRole="header">
-          {t("Vérifiez votre e-mail")}
+          {t("verify.checkEmail")}
         </Text>
         <Text style={styles.muted}>
-          {t("Saisissez le code à 6 chiffres envoyé à {email}.", {
+          {t("common.enterCodeSentTo", {
             email: params.email,
           })}
         </Text>
       </View>
 
       <CodeInput
-        label={t("Code de vérification")}
+        label={t("common.verificationCode")}
         value={code}
         // The last digit submits the code: no need to press the button.
         onChange={(next) => {
@@ -116,20 +116,20 @@ export default function Verify() {
       )}
 
       <Text style={[styles.muted, styles.resend]}>
-        {t("Pas reçu ?")}{" "}
+        {t("verify.didntGet")}{" "}
         {seconds > 0 ? (
-          t("Renvoyer le code dans 0:{seconds}", {
+          t("verify.resendIn", {
             seconds: String(seconds).padStart(2, "0"),
           })
         ) : (
           <Text accessibilityRole="button" style={styles.link} onPress={resend}>
-            {t("Renvoyer le code")}
+            {t("common.resendCode")}
           </Text>
         )}
       </Text>
 
       <Button size="lg" disabled={pending} onPress={() => submit()}>
-        {pending ? t("Vérification…") : t("Valider")}
+        {pending ? t("verify.checking") : t("common.confirm")}
       </Button>
 
       <Text
@@ -137,7 +137,7 @@ export default function Verify() {
         style={[styles.link, styles.footer]}
         onPress={() => router.back()}
       >
-        {t("Modifier l'adresse e-mail")}
+        {t("verify.changeEmailAddress")}
       </Text>
     </AuthShell>
   )
