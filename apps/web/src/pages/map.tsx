@@ -509,7 +509,12 @@ export function Map() {
           </Text>
         )}
 
-        <ul aria-label={t("map.results")} className="flex flex-col gap-2">
+        {/* On small screens the map comes right after the filters: the list
+            would push it far down the page. */}
+        <ul
+          aria-label={t("map.results")}
+          className="hidden flex-col gap-2 lg:flex"
+        >
           {results.slice(0, maxListed).map(({ panel, distance }) => (
             <li key={panel.id}>
               <button
@@ -553,7 +558,7 @@ export function Map() {
           ))}
         </ul>
         {results.length > maxListed && (
-          <Text variant="muted">
+          <Text variant="muted" className="hidden lg:block">
             {t("map.firstListed", { count: maxListed })}
           </Text>
         )}

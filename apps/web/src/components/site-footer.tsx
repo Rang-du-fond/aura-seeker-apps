@@ -1,10 +1,12 @@
+import { Link } from "react-router"
+
 import type { MessageKey } from "@/lib/i18n"
 import { useT } from "@/lib/language"
 
-const legalLinks: MessageKey[] = [
-  "footer.legal",
-  "footer.accessibility",
-  "footer.personalData",
+const legalLinks: { to: string; label: MessageKey }[] = [
+  { to: "/legal", label: "footer.legal" },
+  { to: "/accessibility", label: "footer.accessibility" },
+  { to: "/privacy", label: "footer.personalData" },
 ]
 
 export function SiteFooter() {
@@ -19,12 +21,11 @@ export function SiteFooter() {
           </strong>
           {t("footer.aboutText")}
         </div>
-        {/* TODO: point these at the legal pages once they exist. */}
         <div className="flex flex-col gap-1">
-          {legalLinks.map((label) => (
-            <a key={label} href="#" className="text-link underline">
+          {legalLinks.map(({ to, label }) => (
+            <Link key={to} to={to} className="text-link underline">
               {t(label)}
-            </a>
+            </Link>
           ))}
         </div>
       </div>

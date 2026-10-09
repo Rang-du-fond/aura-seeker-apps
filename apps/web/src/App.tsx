@@ -3,6 +3,7 @@ import { BrowserRouter, Outlet, Route, Routes } from "react-router"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { Home } from "@/pages/home"
+import { Accessibility, LegalNotice, Privacy } from "@/pages/info"
 import { Map } from "@/pages/map"
 import { Showcase } from "@/pages/showcase"
 
@@ -36,6 +37,9 @@ export function App() {
       <Routes>
         <Route element={<SiteLayout />}>
           <Route index element={<Home />} />
+          <Route path="legal" element={<LegalNotice />} />
+          <Route path="accessibility" element={<Accessibility />} />
+          <Route path="privacy" element={<Privacy />} />
         </Route>
         <Route element={<MapLayout />}>
           <Route path="map" element={<Map />} />
