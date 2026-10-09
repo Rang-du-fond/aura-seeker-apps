@@ -1,0 +1,112 @@
+# Builds the Android app (release APK) and attaches it to the GitHub release
+# of a version tag. Run by hand, it only builds: the APK is kept as a workflow
+# artifact.
+# Tip: pin third-party actions to a full commit SHA (Renovate/Dependabot keep them up to date).
+name: Mobile release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+concurrency:
+  group: mobile-release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: write       # create the release and upload the APK
+    env:
+      APP_VARIANT: production
+      # Grows with every run, so each APK installs over the previous one.
+      ANDROID_VERSION_CODE: ${{ github.run_number }}
+      # Compiled into the app. Unset, the app uses the defaults in its code.
+      EXPO_PUBLIC_API_URL: ${{ vars.API_URL }}
+      EXPO_PUBLIC_CONTACT_EMAIL: ${{ vars.CONTACT_EMAIL }}
+    steps:
+      - uses: actions/checkout@v7
+      # "v1.2.3" gives version 1.2.3; a manual run keeps the one in app.json.
+      - name: Version from the tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: echo "APP_VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: actions/cache@v6
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+      - run: bun install --frozen-lockfile
+
+      # android/ is not committed: Expo generates it from app.json and
+      # app.config.ts.
+      - name: Generate the Android project
+        run: bunx expo prebuild --platform android --clean --no-install
+        working-directory: apps/mobile
+
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Build the release APK
+        run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+        working-directory: apps/mobile/android
+        env:
+          NODE_ENV: production
+
+      # The generated project signs with Android's public debug key. With the
+      # ANDROID_KEYSTORE_* secrets set, the APK is signed again with the
+      # project's own key; without them it keeps the debug signature.
+      - name: Sign
+        id: sign
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          built=apps/mobile/android/app/build/outputs/apk/release/app-release.apk
+          name="aura-seeker-${APP_VERSION:-$GITHUB_SHA}.apk"
+          cp "$built" "$name"
+          apksigner=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -n 1)
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+            "$apksigner" sign --ks "$RUNNER_TEMP/release.keystore" \
+              --ks-pass env:KEYSTORE_PASSWORD --ks-key-alias "$KEY_ALIAS" \
+              --key-pass env:KEY_PASSWORD "$name"
+            rm "$RUNNER_TEMP/release.keystore"
+          else
+            echo "::warning::No ANDROID_KEYSTORE_BASE64 secret: the APK is signed with Android's public debug key."
+          fi
+          "$apksigner" verify --print-certs "$name" | grep -E "SHA-(1|256) digest"
+          sha256sum "$name" > "$name.sha256"
+          echo "apk=$name" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: android-apk
+          path: |
+            ${{ steps.sign.outputs.apk }}
+            ${{ steps.sign.outputs.apk }}.sha256
+          retention-days: 14
+
+      - name: Attach to the GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          APK: ${{ steps.sign.outputs.apk }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "$APK" "$APK.sha256" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "$APK" "$APK.sha256" \
+              --title "$GITHUB_REF_NAME" --generate-notes --verify-tag
+          fi

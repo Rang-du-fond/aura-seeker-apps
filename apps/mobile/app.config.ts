@@ -7,6 +7,12 @@ import type { ConfigContext, ExpoConfig } from "expo/config"
 const production = process.env.APP_VARIANT === "production"
 const identifier = production ? "fr.auraseeker.app" : "fr.auraseeker.app.debug"
 
+// Set by the release workflow: the version shown to users (from the git tag)
+// and Android's version code, which must grow with each release for a phone
+// to accept it as an update.
+const version = process.env.APP_VERSION
+const versionCode = Number(process.env.ANDROID_VERSION_CODE) || undefined
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   extra: {
@@ -23,6 +29,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   name: production ? "Aura Seeker" : "Aura Seeker (debug)",
   slug: "aura-seeker",
+  version: version ?? config.version,
   ios: { ...config.ios, bundleIdentifier: identifier },
-  android: { ...config.android, package: identifier },
+  android: {
+    ...config.android,
+    package: identifier,
+    versionCode: versionCode ?? config.android?.versionCode,
+  },
 })

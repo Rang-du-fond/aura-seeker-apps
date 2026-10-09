@@ -33,7 +33,13 @@ The web app reads the Aura Seeker API (`../api-rust`). The API sends no CORS hea
 - **quality** — `bun run format:check`, `bun run lint`, `bun run typecheck` on the whole monorepo.
 - **web-image** — builds `apps/web/Dockerfile`, checks the container serves the app, scans it with Trivy, and on the default branch and `v*` tags pushes it to `ghcr.io/<owner>/aura-seeker-web` with an SBOM, build provenance and a cosign signature.
 
-The mobile app is not built in CI.
+`.github/workflows/mobile-release.yml` builds the Android app when a `v*` tag is pushed and attaches the APK to that tag's GitHub release (run by hand, it keeps the APK as a workflow artifact instead). The version comes from the tag and the version code from the run number.
+
+```bash
+git tag v1.0.0 && git push origin v1.0.0
+```
+
+The APK is signed with Android's public debug key unless these repository secrets are set: `ANDROID_KEYSTORE_BASE64` (the keystore, base64-encoded), `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`. The repository variables `API_URL` and `CONTACT_EMAIL` are compiled into the app when set.
 
 ```bash
 docker build -f apps/web/Dockerfile -t aura-seeker-web .
