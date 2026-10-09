@@ -21,6 +21,7 @@ import {
   LogOutIcon,
   MailIcon,
   PlusIcon,
+  ScanLineIcon,
   ShieldIcon,
   SunMoonIcon,
   Trash2Icon,
@@ -59,8 +60,15 @@ const minPasswordLength = 12
 type Row = { Icon: LucideIcon; label: string }
 
 // Labels are French: they are translated where they are shown.
-const helpRows: (Row & { to: "/help" | "/personal-data" })[] = [
+const helpRows: (Row & {
+  to: "/help" | "/personal-data" | "/rules?review=1"
+})[] = [
   { Icon: CircleHelpIcon, label: "Aide et contact", to: "/help" },
+  {
+    Icon: ScanLineIcon,
+    label: "Règles de prise de vue",
+    to: "/rules?review=1",
+  },
   { Icon: ShieldIcon, label: "Données personnelles", to: "/personal-data" },
 ]
 

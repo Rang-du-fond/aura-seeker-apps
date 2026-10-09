@@ -11,6 +11,7 @@ import { Button } from "@workspace/ui/native/button"
 import { Text } from "@workspace/ui/native/text"
 import { themed, useColors } from "@workspace/ui/native/theme"
 import { radius, space } from "@workspace/ui/native/tokens"
+import { afterPermissions } from "@/lib/permissions"
 import { useT } from "@/lib/preferences"
 import { StatusBar } from "@/components/status-bar"
 
@@ -158,8 +159,11 @@ export default function Permissions() {
       </View>
 
       <View style={styles.footer}>
-        <Button size="lg" onPress={() => router.replace("/map")}>
-          {t("Commencer")}
+        <Button
+          size="lg"
+          onPress={async () => router.replace(await afterPermissions())}
+        >
+          {t("Continuer")}
         </Button>
         <Text variant="muted" style={styles.note}>
           {t("Vous pourrez changer ces choix dans les réglages du téléphone.")}

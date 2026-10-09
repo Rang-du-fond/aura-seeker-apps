@@ -1,6 +1,14 @@
 import { Camera } from "expo-camera"
 import * as Location from "expo-location"
 
+import { rulesAccepted } from "@/lib/rules"
+
+// Where the onboarding goes once the permissions are dealt with: the photo
+// rules until they have been accepted, then the map.
+export async function afterPermissions() {
+  return (await rulesAccepted()) ? "/map" : "/rules"
+}
+
 // Where to go after signing in: the permissions screen only if the camera or
 // the location still has to be allowed.
 export async function firstScreen() {
@@ -15,5 +23,5 @@ export async function firstScreen() {
   )
   const granted = await Promise.race([check, timeout]).catch(() => false)
 
-  return granted ? "/map" : "/permissions"
+  return granted ? afterPermissions() : "/permissions"
 }

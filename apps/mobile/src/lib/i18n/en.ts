@@ -315,6 +315,31 @@ export const en = {
   "Données personnelles": "Personal data",
   "Se déconnecter": "Sign out",
 
+  // Photo rules
+  Continuer: "Continue",
+  "Règles de prise de vue": "Photo rules",
+  "Avant de commencer": "Before you start",
+  "quelques règles": "a few rules",
+  "Seulement le panneau": "Only the sign",
+  ", bien cadré dans le carré.": ", well framed in the square.",
+  "Pas d'objet en mouvement": "Nothing moving",
+  "Passants, cyclistes, animaux… attendez que la vue soit dégagée.":
+    "Passers-by, cyclists, animals… wait until the view is clear.",
+  "Pas de véhicule": "No vehicles",
+  "Voitures, bus, trains.": "Cars, buses, trains.",
+  "Pas de plaque d'immatriculation": "No number plates",
+  "Même lisible en partie ou en arrière-plan.":
+    "Even partly readable or in the background.",
+  "Pas de document de la Région": "No documents of the Region",
+  "Courriers, dossiers, écrans, affichages internes.":
+    "Letters, files, screens, internal notices.",
+  "Aucune donnée personnelle ou sensible": "No personal or sensitive data",
+  "Visages, noms, adresses, numéros.": "Faces, names, addresses, numbers.",
+  "J'ai lu et je respecterai ces règles.":
+    "I have read these rules and will follow them.",
+  "Ces règles restent accessibles depuis votre profil.":
+    "These rules remain available from your profile.",
+
   // Help and contact
   "Retour à mon profil": "Back to my profile",
   "Recenser un panneau": "Recording a sign",
